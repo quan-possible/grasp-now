@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  body {
+    font-family: 'Franklin Gothic', system-ui, -apple-system, sans-serif;
+    @apply text-gray-900 bg-white;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cheltenham', Georgia, serif;
+    @apply font-medium text-gray-900;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-card hover:shadow-card-hover transition-shadow duration-200;
+  }
+  
+  .btn-primary {
+    @apply bg-gray-900 text-white px-6 py-2 rounded-md font-medium hover:bg-gray-800 transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 text-gray-900 px-6 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200;
+  }
+}

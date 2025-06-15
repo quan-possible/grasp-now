@@ -108,14 +108,14 @@ grasp-now/
 
 ## Current Development Phase
 
-**🚀 Currently in Phase 1: MVP Implementation (Week 1-7)**
+**🚀 Currently in Phase 1: MVP Implementation (4-week sprint)**
 
-We are actively implementing Phase 1 using a zero-cost MVP approach with mock lens generation. The implementation follows `docs/phase1.md` which includes:
-- React frontend with Firebase backend (free tier)
-- Mock lens generation (Slide, Study, Story formats) using simple text transformations
-- Document upload (PDF, TXT) with client-side text extraction
-- Real-time editing and saving with Firestore
-- Google authentication and user-specific document storage
+Implementation follows `docs/phase1.md`:
+- React 18 + Vite + TypeScript + Firebase (free tier)
+- Milkdown editor with Notion-like editing experience
+- Mock lens generation (Slide, Study, Story) using text transformations
+- Google auth, document upload/management, real-time sync
+- NYT-inspired UI with card-based design and smooth transitions
 
 ## Implementation Priorities
 
