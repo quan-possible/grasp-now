@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**grasp.now** is a document transformation and learning platform that transforms documents through multiple "lenses" - different perspectives optimized for various comprehension needs. Currently in planning phase with no implementation code yet.
+**grasp.now** is a document transformation and learning platform that transforms documents through multiple "lenses" - different perspectives optimized for various comprehension needs. 
+
+**Current Status**: Actively implementing Phase 1 (Core Lens Engine) - see details below.
 
 ## Technology Stack
 
@@ -104,14 +106,26 @@ grasp-now/
 └── docs/                 # Product documentation
 ```
 
+## Current Development Phase
+
+**🚀 Currently in Phase 1: MVP Implementation (Week 1-7)**
+
+We are actively implementing Phase 1 using a zero-cost MVP approach with mock lens generation. The implementation follows `docs/phase1.md` which includes:
+- React frontend with Firebase backend (free tier)
+- Mock lens generation (Slide, Study, Story formats) using simple text transformations
+- Document upload (PDF, TXT) with client-side text extraction
+- Real-time editing and saving with Firestore
+- Google authentication and user-specific document storage
+
 ## Implementation Priorities
 
 When implementing, follow the 4-phase roadmap:
 
-1. **Phase 1 (Weeks 1-4)**: Core Lens Engine
+1. **Phase 1 (Weeks 1-4)**: Core Lens Engine ← CURRENT PHASE
    - Document upload and text extraction
-   - Basic lens generation (Slide, Study, Story)
-   - Simple viewer with lens switching
+   - AI-powered lens generation (Slide, Study, Story)
+   - Real-time viewer with lens switching
+   - Citation transparency system
 
 2. **Phase 2 (Weeks 5-8)**: Lens Ecosystem  
    - Scholar and Speed lenses
@@ -151,8 +165,8 @@ When implementing, follow the 4-phase roadmap:
 
 Quick guide to project docs:
 
-- **`docs/architecture.md`** - Technical blueprint, Firebase/GCP setup, AI pipeline
-- **`docs/phase1.md`** - 4-week MVP implementation plan with code examples
+- **`docs/phase1.md`** - Complete MVP implementation plan with mock lens generation (CURRENT)
+- **`docs/architecture.md`** - Technical blueprint, Firebase/GCP setup, AI pipeline  
 - **`docs/plan.md`** - Phased roadmap from steel thread to full platform
 - **`docs/product.md`** - Product vision, features, and UI concepts
 - **`docs/user-stories.md`** - Feature requirements and acceptance criteria

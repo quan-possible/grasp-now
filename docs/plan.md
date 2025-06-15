@@ -1,306 +1,330 @@
 # grasp.now Implementation Plan
 
 ## Executive Summary
-This document outlines the technical implementation plan for grasp.now, following the resilient architecture defined in `architecture.md`. The implementation uses a "steel thread" approach, delivering end-to-end functionality in Week 1, then expanding to the full platform over 6 months.
+This document outlines the complete implementation roadmap for grasp.now. We start with a 4-week MVP using mock lens generation to validate the core concept, then build toward a full AI-powered platform over 6 months.
 
-## Project Setup & Infrastructure (Week 0)
+## Project Setup & Infrastructure
 
-### Development Environment
-1. **Repository Structure**
-   ```
-   grasp-now/
-   ├── frontend/                 # Existing React application
-   ├── backend/
-   │   ├── functions/           # Firebase Cloud Functions
-   │   ├── workers/             # Cloud Run workers
-   │   └── scripts/             # Deployment scripts
-   ├── .github/workflows/       # CI/CD pipelines
-   └── docs/                    # Documentation
-   ```
+### Repository Structure
+```
+grasp-now/
+├── frontend/                 # React + Vite + TypeScript
+│   ├── src/
+│   │   ├── components/      # React components
+│   │   ├── pages/          # Page components
+│   │   ├── store/          # Zustand stores
+│   │   ├── hooks/          # Custom React hooks
+│   │   ├── lib/            # Firebase config & utilities
+│   │   └── styles/         # Tailwind & global styles
+│   └── public/
+├── backend/                 # (Phase 2+)
+│   ├── functions/          # Firebase Cloud Functions
+│   ├── workers/            # Cloud Run workers
+│   └── scripts/            # Deployment scripts
+├── .github/workflows/      # CI/CD pipelines
+└── docs/                   # Documentation
+```
 
-2. **Initial Setup Tasks**
-   - Enable GCP APIs: Cloud Run, Pub/Sub, Cloud Build
-   - Create Firebase project with Firestore and Storage
-   - Configure authentication providers in Firebase Console
-   - Create `process-document` Pub/Sub topic
-   - Set up development and production environments
-   - Configure GitHub Actions for deployment
-
-3. **Firestore Security Rules**
-   ```javascript
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /users/{userId} {
-         allow read, write: if request.auth.uid == userId;
-       }
-       match /documents/{documentId} {
-         allow read, write: if request.auth.uid == resource.data.ownerId;
-         match /lenses/{lensId} {
-           allow read: if request.auth.uid == get(/databases/$(database)/documents/documents/$(documentId)).data.ownerId;
-         }
-       }
-     }
-   }
-   ```
-
-## Phase 0: Steel Thread (Week 1)
-
-### Goal
-User can upload a PDF and see one generated "Slide Lens" appear in real-time, validating the entire architecture pipeline.
-
-### Day 1-2: Backend Infrastructure
-**Cloud Function Tasks:**
-- Create `extractTextAndQueue` function triggered by Storage uploads
-- Implement PDF text extraction using `pdf-parse`
-- Store extracted text in Firestore document
-- Publish message to `process-document` Pub/Sub topic
-- Add error handling and logging
-
-**Firestore Schema:**
+### Firestore Schema
 ```typescript
+// Document collection
 interface Document {
   id: string;
   ownerId: string;
   title: string;
-  fileUrl: string;
+  fileUrl?: string;
   extractedText: string;
+  folderId?: string;
   status: 'uploading' | 'processing' | 'ready' | 'error';
   createdAt: Timestamp;
+  updatedAt: Timestamp;
   processedAt?: Timestamp;
   errorMessage?: string;
 }
+
+// Lens subcollection (documents/{docId}/lenses)
+interface Lens {
+  id: string;
+  type: 'slide' | 'study' | 'story' | 'scholar' | 'speed' | 'custom';
+  content: string;
+  metadata?: {
+    wordCount: number;
+    readingTime: number;
+    quality?: number;
+  };
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+// User collection
+interface User {
+  id: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+  subscription: 'free' | 'pro' | 'enterprise';
+  createdAt: Timestamp;
+  lastLogin: Timestamp;
+}
+
+// Folder collection (Phase 1+)
+interface Folder {
+  id: string;
+  ownerId: string;
+  name: string;
+  parentId?: string;
+  createdAt: Timestamp;
+}
 ```
 
-### Day 3-4: Lens Generation Worker
-**Cloud Run Job Tasks:**
-- Create `lens-generator-mvp` worker in Node.js/TypeScript
-- Configure Cloud Run Job triggered by Pub/Sub
-- Implement Gemini 1.5 Pro integration
-- Generate single "Slide Lens" with MVP citation format
-- Write lens to Firestore subcollection
-- Update document status to 'ready'
-
-**Worker Implementation:**
-```typescript
-// Process flow:
-// 1. Receive docId from Pub/Sub message
-// 2. Fetch extractedText from Firestore
-// 3. Call Gemini API with Slide Lens prompt
-// 4. Parse response and add :::source[...] citations
-// 5. Write to documents/{docId}/lenses/slide-lens
-// 6. Update parent document status
+### Firestore Security Rules
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User profile access
+    match /users/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+    
+    // Document access
+    match /documents/{documentId} {
+      allow read, write: if request.auth.uid == resource.data.ownerId;
+      allow read: if request.auth.uid in resource.data.sharedWith;
+      
+      // Lens access
+      match /lenses/{lensId} {
+        allow read, write: if request.auth.uid == 
+          get(/databases/$(database)/documents/documents/$(documentId)).data.ownerId;
+      }
+    }
+    
+    // Folder access
+    match /folders/{folderId} {
+      allow read, write: if request.auth.uid == resource.data.ownerId;
+    }
+  }
+}
 ```
 
-### Day 5: Frontend Integration & Milkdown Editor
-**UI Tasks:**
-- Add Firestore listener to `DocumentViewPage`
-- Create lens state management in `editorStore`
-- Update `MainContent` to render lens tabs dynamically
-- Implement loading states during processing
-- Add error handling for failed generations
+## Implementation Strategy
 
-**Milkdown Editor Implementation:**
-- Install and configure Milkdown with React
-- Set up basic markdown rendering for lens content
-- Implement read-only mode for generated lenses
-- Add syntax highlighting and typography
-- Prepare for citation plugin integration
+### Development Approach
+**Phase-Gate Strategy**: Each phase must meet success criteria before proceeding to the next phase. This ensures we validate assumptions before investing in complex features.
 
-**Real-time Updates:**
-```typescript
-// Listen for new lenses in subcollection
-// Update UI automatically when lenses appear
-// No polling or manual refresh needed
-```
+**Technology Evolution**:
+- **Phase 1**: React + Firebase + Mock transformations (Zero AI cost)
+- **Phase 2**: Add Cloud Functions + Gemini API (Controlled AI cost)
+- **Phase 3**: Add real-time collaboration + advanced features
+- **Phase 4**: Add enterprise features + scaling infrastructure
+- **Phase 5**: Add advanced AI + business intelligence
 
-## Phase 1: Core Lens Engine (Weeks 2-4)
+### Risk Mitigation
+- Start with zero-cost MVP to validate market fit
+- Incremental feature rollout with user feedback loops
+- Performance budgets and monitoring at each phase
+- Security-first approach with regular audits
 
-### Week 2: Complete Lens Trinity
-**Backend Tasks:**
-- Expand `lens-generator` to create all three core lenses
-- Implement parallel processing with Promise.all()
-- Add Study Lens prompt (detailed notes with examples)
-- Add Story Lens prompt (narrative magazine format)
-- Update worker to write lenses as they complete
-- Implement proper error handling per lens
+## Phase 1: MVP Foundation (Weeks 1-4)
+*See `docs/phase1.md` for detailed implementation plan*
 
-**Frontend Tasks:**
-- Update UI to handle multiple lens tabs
-- Add smooth transitions between lenses
-- Implement position synchronization prep
-- Polish loading states for each lens
+### Goal
+Launch a polished document transformation platform with mock lens generation, Notion-like editing, and professional UI to validate the core concept.
 
-### Week 3: Text Extraction & Upload Pipeline
-**Backend Enhancements:**
-- Add DOCX support using `mammoth.js`
-- Implement Markdown and TXT file parsing
-- Add file validation (type, size limits)
-- Implement chunking for large documents
-- Add extraction progress tracking
+### Key Deliverables
+- **Week 1**: Authentication, UI framework, document management
+- **Week 2**: Milkdown editor integration with Notion-like features
+- **Week 3**: Mock lens generation system (Slide, Study, Story)
+- **Week 4**: UI polish, performance optimization, beta launch
 
-**Frontend Upload Experience:**
-- Enhance drag-and-drop with file preview
-- Add upload progress with percentage
-- Implement multi-file upload queue
-- Show extraction status in real-time
-- Add retry mechanism for failures
+### Success Metrics
+- 10+ beta users actively using the platform
+- 3 core lens types working with smooth switching
+- Notion-like editing experience with auto-save
+- Professional UI with shadows, animations, NYT-inspired design
+- Zero AI costs during validation phase
 
-### Week 4: Folder Integration & Polish
-**Integration Tasks:**
-- Connect existing `HomeLeftSidebar` to backend
-- Modify `workspaceStore.uploadDocument` to accept `folderId`
-- Update Firestore queries to filter by folder
-- Implement folder creation and management
-- Add document move between folders
+## Phase 2: AI Integration & Advanced Features (Weeks 5-8)
+*Implementing features deferred from Phase 1*
 
-**Citation System:**
-- Create Milkdown plugin for :::source[...] syntax
-- Render citations as interactive elements
-- Add hover tooltips showing source text
-- Style citations for visual distinction
-- Test with all three lens types
+### Week 5: Real AI Lens Generation
+**Backend Infrastructure:**
+- Deploy Cloud Functions for text extraction
+- Implement Cloud Run workers with Pub/Sub
+- Integrate Gemini 1.5 Pro for lens generation
+- Replace mock transformations with real AI
+- Implement error handling and retry logic
 
-## Phase 2: Lens Ecosystem (Weeks 5-8)
+**Cost Management:**
+- Add usage quotas and monitoring
+- Implement lens caching strategies
+- Track generation costs per user
+- Add rate limiting for free tier
 
-### Week 5: Scholar & Speed Lenses
-**New Lens Types:**
-- Implement Scholar Lens with academic formatting
-- Add bibliography generation from citations
-- Create Speed Lens for executive summaries
-- Add lens quality validation
-- Implement lens regeneration capability
+### Week 6: Enhanced Document Processing
+**Multi-format Support:**
+- DOCX processing with mammoth.js
+- Advanced PDF extraction with OCR fallback
+- Markdown and TXT optimization
+- Document chunking for large files
+- Progress tracking for all operations
 
 **Performance Optimization:**
-- Cache generated lenses in Firestore
-- Implement incremental lens updates
-- Add cost tracking per generation
-- Optimize Gemini API calls
+- Parallel lens generation
+- Incremental updates for large documents
+- Client-side caching strategies
+- Background processing queues
 
-### Week 6: Custom Lens Builder
-**Frontend Features:**
-- Build custom lens creation modal
-- Add prompt template editor with examples
-- Implement prompt validation and safety checks
-- Create lens preview before saving
-- Add custom lens management interface
+### Week 7: Citation System & Position Sync
+**Citation Transparency:**
+- Create Milkdown plugin for :::source[...] citations
+- Interactive citation tooltips
+- Source text highlighting
+- Citation accuracy validation
+- Cross-lens citation consistency
 
-**Backend Implementation:**
-- Create `/lens-templates` collection
-- Implement `runCustomLens` callable function
-- Add prompt injection protection
-- Store user templates with permissions
-- Track custom lens usage
+**Position Synchronization:**
+- Implement percentage-based position tracking
+- Smooth transitions between lens switches
+- Scroll position memory
+- Reading progress indicators
 
-### Week 7: Dynamic Focus Control
-**MVP Implementation:**
-- Add "Refine" button for selected text
-- Create expansion modal with context
-- Implement surrounding text extraction
-- Generate focused explanations
-- Add to reading history
+### Week 8: Advanced Editor Features
+**Collaboration Prep:**
+- Implement operational transforms
+- Add conflict resolution
+- User presence indicators
+- Real-time cursor tracking
+- Version history foundation
 
-**Future Prep:**
-- Design granularity slider UI
-- Plan multi-level generation strategy
-- Consider caching implications
+**Custom Lens Builder:**
+- Template creation interface
+- Prompt validation and safety
+- User-generated lens library
+- Sharing and permissions system
 
-### Week 8: Testing & Optimization
-**Quality Assurance:**
-- Unit tests for lens generation
-- Integration tests for full pipeline
-- Load testing with concurrent users
-- Performance profiling and optimization
-- Security audit of custom prompts
+## Phase 3: Lens Ecosystem & Collaboration (Weeks 9-12)
 
-**Launch Preparation:**
-- Fix critical bugs
-- Optimize bundle size
-- Add analytics tracking
-- Prepare documentation
-- Beta user onboarding
+### Week 9: Scholar & Speed Lenses
+**Advanced Lens Types:**
+- Scholar Lens with academic formatting and citations
+- Speed Lens for executive summaries and key points
+- Lens quality scoring and validation
+- A/B testing for lens generation prompts
+- User feedback collection on lens quality
 
-## Phase 3: Collaboration Features (Weeks 9-12)
+### Week 10: Custom Lens Builder
+**User-Generated Lenses:**
+- Template creation interface with examples
+- Prompt validation and safety filters
+- Community lens library and sharing
+- Lens performance analytics
+- Revenue sharing for popular templates
 
-### Week 9: Document Sharing
-**Sharing Implementation:**
-- Add `sharedWith` array to documents
-- Update security rules for shared access
-- Create share dialog with permissions
-- Implement share link generation
-- Add shared documents view
+### Week 11: Dynamic Focus Control
+**Granular Content Control:**
+- Text selection "Refine" functionality
+- Context-aware explanations
+- Multi-level detail granularity
+- Focus history and bookmarking
+- Smart content recommendations
 
-### Week 10: Lens Library
-**Public Templates:**
-- Make lens templates shareable
-- Create template marketplace UI
-- Add rating and review system
-- Implement template categories
-- Track popular templates
+### Week 12: Quality & Performance
+**Production Readiness:**
+- Comprehensive testing suite
+- Performance optimization
+- Security audit and penetration testing
+- Documentation and user guides
+- Customer support system setup
 
-### Week 11: Export & Versioning
-**Export Features:**
-- PDF generation from any lens
-- DOCX export with formatting
-- Markdown export option
-- Implement version history
-- Add diff view for changes
+## Phase 4: Sharing & Export Features (Weeks 13-16)
 
-### Week 12: Polish & Launch
-**Final Tasks:**
-- Complete user testing
-- Fix remaining bugs
-- Optimize performance
-- Update documentation
-- Marketing site launch
+### Week 13: Document Sharing & Collaboration
+**Real-time Collaboration:**
+- Multi-user document editing
+- Live cursor tracking and presence
+- Comment system and discussions
+- Share permissions (view, edit, admin)
+- Activity feed and notifications
 
-## Phase 4: Intelligence Layer (Months 4-6)
+### Week 14: Export & Publishing
+**Content Distribution:**
+- PDF export with custom styling
+- DOCX export maintaining formatting
+- Markdown and HTML export options
+- Publish to web with custom URLs
+- Integration with publishing platforms
 
-### Month 4: Analytics & Learning
-**Features:**
-- Reading pattern tracking
-- Comprehension analytics
-- Learning recommendations
-- Progress dashboards
-- Study session insights
+### Week 15: Version Control & History
+**Document Lifecycle Management:**
+- Automatic version snapshots
+- Visual diff between versions
+- Branch and merge functionality
+- Rollback to previous versions
+- Collaborative approval workflows
 
-### Month 5: Advanced AI
-**Capabilities:**
-- Multi-document synthesis
-- Question-answering system
-- Smart summarization
-- Cross-reference detection
-- Topic extraction
-
-### Month 6: Enterprise & Scale
+### Week 16: Teams & Workspaces
 **Enterprise Features:**
-- Team workspaces
-- SSO integration
-- Admin controls
-- Usage analytics
-- SLA monitoring
+- Team workspace creation
+- Role-based access control
+- Bulk document management
+- Usage analytics and reporting
+- SSO integration prep
+
+## Phase 5: Intelligence Layer (Months 5-6)
+
+### Month 5: Advanced AI Intelligence
+**Smart Document Processing:**
+- Multi-document synthesis and cross-referencing
+- Intelligent question-answering system
+- Automatic topic extraction and tagging
+- Smart content recommendations
+- Plagiarism and citation checking
+
+**Learning Analytics:**
+- Reading pattern analysis
+- Comprehension tracking
+- Personalized learning paths
+- Knowledge gap identification
+- Study effectiveness metrics
+
+### Month 6: Enterprise Platform
+**Scale & Reliability:**
+- Enterprise SSO integration
+- Advanced admin controls and audit logs
+- SLA monitoring and guarantees
+- Global CDN and edge computing
+- 99.99% uptime infrastructure
+
+**Business Intelligence:**
+- Advanced usage analytics
+- Custom reporting dashboards
+- API for third-party integrations
+- White-label solutions
+- Enterprise onboarding automation
 
 ## Technical Milestones
 
 ### Performance Targets
-- Steel thread working: Day 5
-- Three core lenses: Week 2
-- <30s processing for 50-page PDF
-- <2s first meaningful paint
-- 99.9% uptime
+- **Phase 1**: MVP with mock lenses operational
+- **Phase 2**: Real AI generation <30s for 50-page PDF
+- **Phase 3**: Multi-user collaboration with <100ms latency
+- **Phase 4**: Enterprise-grade 99.99% uptime
+- **Phase 5**: AI processing <10s for complex documents
 
 ### Cost Projections
-- Gemini API: ~$0.10 per document
-- Cloud Run: ~$50/month at launch
-- Firestore: ~$100/month for 10k users
-- Storage: ~$25/month for documents
+- **Phase 1**: $0 (Firebase free tier)
+- **Phase 2**: ~$200/month (AI + infrastructure)
+- **Phase 3**: ~$500/month (collaboration features)
+- **Phase 4**: ~$1,000/month (enterprise features)
+- **Phase 5**: ~$2,000/month (advanced AI)
 
 ### Security Checkpoints
-- Week 1: Basic authentication working
-- Week 3: File validation complete
-- Week 6: Prompt sanitization implemented
-- Week 8: Security audit passed
-- Week 12: Penetration testing
+- **Week 4**: Basic authentication and data protection
+- **Week 8**: AI prompt sanitization and validation
+- **Week 12**: Custom lens security audit
+- **Week 16**: Enterprise security compliance
+- **Month 6**: SOC 2 Type II certification
 
 ## Risk Mitigation
 
@@ -318,29 +342,40 @@ interface Document {
 
 ## Success Metrics
 
-### Week 1 (Steel Thread)
-- ✓ PDF upload to lens display working
-- ✓ <60s end-to-end processing
-- ✓ Real-time UI updates
-- ✓ Basic error handling
+### Phase 1 (Month 1) - MVP Validation
+- ✓ 10+ beta users actively using platform
+- ✓ 3 core mock lenses with smooth switching
+- ✓ Notion-like editing experience operational
+- ✓ Professional UI with 90+ user satisfaction
+- ✓ Zero technical debt or security issues
 
-### Month 1 (MVP)
-- ✓ 3 core lenses generating
-- ✓ Folder organization working
-- ✓ Citation system implemented
-- ✓ 100 beta users onboarded
+### Phase 2 (Month 2) - AI Integration
+- ✓ Real AI lens generation operational
+- ✓ <30s processing time for standard documents
+- ✓ 100+ users onboarded
+- ✓ Citation system with 95%+ accuracy
+- ✓ Cost per document <$0.15
 
-### Month 3 (Platform)
-- ✓ Custom lenses created by users
-- ✓ Documents shared between users
-- ✓ 1,000 active users
-- ✓ <$0.20 cost per document
+### Phase 3 (Month 3) - Lens Ecosystem
+- ✓ Custom lens builder with user-generated content
+- ✓ 1,000+ active users
+- ✓ 10+ community-created lens templates
+- ✓ Advanced editor features operational
+- ✓ User retention rate >70%
 
-### Month 6 (Scale)
-- ✓ 10,000 active users
-- ✓ 100,000 documents processed
+### Phase 4 (Month 4) - Collaboration
+- ✓ Real-time collaboration features
+- ✓ Document sharing and export working
+- ✓ 5,000+ active users
+- ✓ Enterprise pilot customers
 - ✓ 99.9% uptime achieved
-- ✓ Enterprise customers onboarded
+
+### Phase 5 (Month 6) - Intelligence Platform
+- ✓ 10,000+ active users
+- ✓ 100,000+ documents processed
+- ✓ Enterprise customers paying
+- ✓ Advanced AI features operational
+- ✓ Path to profitability established
 
 ## Conclusion
-This plan delivers a working product in Week 1 through the steel thread approach, then systematically builds toward a comprehensive platform. By following the resilient architecture and focusing on user value at each phase, grasp.now will transform how people interact with documents.
+This plan delivers a polished MVP in 4 weeks using mock lens generation to validate the core concept without AI costs, then systematically builds toward a comprehensive AI-powered platform. By focusing on user experience first and technical complexity second, grasp.now will transform how people interact with documents while maintaining sustainable growth and development velocity.
