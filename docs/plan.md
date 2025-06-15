@@ -92,13 +92,20 @@ interface Document {
 // 6. Update parent document status
 ```
 
-### Day 5: Frontend Integration
+### Day 5: Frontend Integration & Milkdown Editor
 **UI Tasks:**
 - Add Firestore listener to `DocumentViewPage`
 - Create lens state management in `editorStore`
 - Update `MainContent` to render lens tabs dynamically
 - Implement loading states during processing
 - Add error handling for failed generations
+
+**Milkdown Editor Implementation:**
+- Install and configure Milkdown with React
+- Set up basic markdown rendering for lens content
+- Implement read-only mode for generated lenses
+- Add syntax highlighting and typography
+- Prepare for citation plugin integration
 
 **Real-time Updates:**
 ```typescript

@@ -14,6 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Zustand for state management
 - Milkdown for rich text editing
 - Tailwind CSS for styling
+- NYT-inspired typography and design system
 
 ### Backend (Planned)
 - Firebase (Auth, Firestore, Cloud Storage)
@@ -135,6 +136,8 @@ When implementing, follow the 4-phase roadmap:
 - Use Cloud Storage signed URLs for document security
 - Implement position sync using percentage-based markers
 - Cache frequently accessed lenses for cost optimization
+- NYT-inspired design with monochromatic color scheme (black/white/gray)
+- Clean, minimal UI inspired by Craft.do and Linear.app layouts
 
 ## Security Considerations
 
@@ -153,3 +156,4 @@ Quick guide to project docs:
 - **`docs/plan.md`** - Phased roadmap from steel thread to full platform
 - **`docs/product.md`** - Product vision, features, and UI concepts
 - **`docs/user-stories.md`** - Feature requirements and acceptance criteria
+- **`docs/components.md`** - UI component library with NYT-inspired design system

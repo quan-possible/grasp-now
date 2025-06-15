@@ -12,14 +12,14 @@
 
 ### Visual Design (Linear.app + Craft.do inspired)
 - **Colors**:
-  - Background: #FAFAFA (warm white)
-  - Surface: #FFFFFF 
-  - Primary: #FF6B35 (orange accent)
+  - Background: #FFFFFF (pure white)
+  - Surface: #FAFAFA (light gray)
+  - Primary: #1A1A1A (black)
   - Text: #1A1A1A (near black)
   - Muted: #6B7280 (gray)
   - Border: #E5E7EB (light gray)
 - **Spacing**: 4px base unit (4, 8, 12, 16, 24, 32, 48, 64px)
-- **Shadows**: Subtle, warm shadows with slight orange tint
+- **Shadows**: Subtle, neutral shadows with gray tones
 - **Borders**: 1px solid, rounded corners (4px small, 8px medium, 12px large)
 
 ## Week 1: Project Foundation & Authentication
@@ -77,9 +77,9 @@ frontend/
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   
   /* Colors */
-  --bg-primary: #FAFAFA;
-  --bg-surface: #FFFFFF;
-  --color-primary: #FF6B35;
+  --bg-primary: #FFFFFF;
+  --bg-surface: #FAFAFA;
+  --color-primary: #1A1A1A;
   --color-text: #1A1A1A;
   --color-muted: #6B7280;
   --color-border: #E5E7EB;
@@ -95,9 +95,9 @@ frontend/
   --space-16: 64px;
   
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(255, 107, 53, 0.1);
-  --shadow-md: 0 4px 12px rgba(255, 107, 53, 0.15);
-  --shadow-lg: 0 8px 24px rgba(255, 107, 53, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 ```
 
@@ -316,7 +316,7 @@ export const DocumentEditor: React.FC<{ content: string }> = ({ content }) => {
 }
 
 .milkdown blockquote {
-  border-left: 4px solid var(--color-primary);
+  border-left: 4px solid var(--color-text);
   padding-left: var(--space-4);
   margin: var(--space-6) 0;
   font-style: italic;
@@ -460,6 +460,7 @@ const LensSelector: React.FC<LensSelectorProps> = ({
 - "Lecture Slides" - presentation format
 - "Detailed Notes" - comprehensive study notes  
 - "Economist Article" - narrative story format
+- Clean, monochromatic design matching NYT aesthetics
 - Smooth transitions with Framer Motion
 - Loading states for generation
 

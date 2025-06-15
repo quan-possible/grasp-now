@@ -91,17 +91,21 @@ Learners waste countless hours because:
 - "Make this sound like a TED talk"
 - "Extract only the actionable insights"
 
-## 8. UI Design: Lens-First Interface
+## 8. UI Design: NYT-Inspired Monochromatic Interface
 
-**Lens Ring** (Top Center) - *Current implementation uses a Tab Bar in `MainContent.tsx`*:
-- A tab-based system allows switching between the original document and various AI-generated lenses (views).
-- An "Add New View" modal allows users to select from available AI transformations.
-- A collapsible preview panel shows mini-previews of each open tab.
+**Design Philosophy**: Clean, typography-focused design inspired by The New York Times digital experience, emphasizing readability and content hierarchy through careful use of black, white, and gray tones.
+
+**Lens Navigation** (Top Center) - *Current implementation uses a Tab Bar in `MainContent.tsx`*:
+- Clean, NYT-inspired tab-based system allows switching between the original document and various AI-generated lenses (views)
+- Monochromatic design with subtle gray borders and black text
+- An "Add New View" modal allows users to select from available AI transformations
+- A collapsible preview panel shows mini-previews of each open tab
 
 **Folder Navigation** (`HomeLeftSidebar.tsx`):
-- Provides a hierarchical view of user's folders.
-- Allows creation of new folders and navigation to folder-specific views (`FolderViewPage.tsx`).
-- Documents within folders can be displayed and accessed directly from the sidebar.
+- Clean, Linear.app-inspired hierarchical view of user's folders with monochromatic styling
+- Minimal design with subtle hover states and black/white/gray color scheme
+- Allows creation of new folders via `CreateFolderModal` and navigation to folder-specific views (`FolderViewPage.tsx`)
+- Documents within folders can be displayed and accessed directly from the sidebar
 
 **Focus Slider** (Right Panel):
 - Vertical slider for detail level
