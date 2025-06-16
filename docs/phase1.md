@@ -118,7 +118,7 @@ Deliver a polished document transformation platform MVP in 4 weeks with mock len
 - **Editor**: Milkdown with collaborative editing plugins
 - **State**: Zustand for client state management
 - **Backend**: Firebase (Auth, Firestore, Storage)
-- **UI**: NYT-inspired design with shadcn/ui components
+- **UI**: Complete design system defined in `docs/styles.md`
 
 ### Architecture Decisions
 - Client-side text extraction (PDF.js, mammoth.js)

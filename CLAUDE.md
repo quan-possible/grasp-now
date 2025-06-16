@@ -167,6 +167,7 @@ When implementing, follow the 4-phase roadmap:
 Quick guide to project docs:
 
 - **`docs/phase1.md`** - Complete MVP implementation plan with mock lens generation (CURRENT)
+- **`docs/styles.md`** - Complete design system with colors, typography, animations, and component patterns
 - **`docs/architecture.md`** - Technical blueprint, Firebase/GCP setup, AI pipeline  
 - **`docs/plan.md`** - Phased roadmap from steel thread to full platform
 - **`docs/product.md`** - Product vision, features, and UI concepts
