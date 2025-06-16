@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **grasp.now** is a document transformation and learning platform that transforms documents through multiple "lenses" - different perspectives optimized for various comprehension needs. 
 
-**Current Status**: Phase 1 Days 1-4 complete. Ready for Days 5-7 (Document Management).
+**Current Status**: Phase 1 Days 1-7 complete. Ready for Week 2 (Milkdown Editor Integration).
 
 ## Technology Stack
 
@@ -52,10 +52,11 @@ Document transformations that present content in different ways:
 
 ## Development Commands
 
-Since this project has no implementation yet, here are the expected commands once set up:
-
 ### Frontend (React/Vite)
 ```bash
+# Navigate to frontend directory
+cd frontend
+
 # Install dependencies
 npm install
 
@@ -65,14 +66,14 @@ npm run dev
 # Build for production
 npm run build
 
-# Run tests
-npm test
-
 # Lint code
 npm run lint
 
-# Type check
-npm run typecheck
+# Preview production build
+npm run preview
+
+# Type check (manual)
+npx tsc --noEmit
 ```
 
 ### Backend (Firebase/GCP)
@@ -87,23 +88,33 @@ gcloud run deploy
 firebase emulators:start
 ```
 
-## Project Structure (Planned)
+## Project Structure
 
 ```
 grasp-now/
-├── frontend/
-│   ├── src/
-│   │   ├── components/     # React components
-│   │   ├── pages/         # Page components
-│   │   ├── store/         # Zustand stores
-│   │   ├── hooks/         # Custom React hooks
-│   │   └── lib/           # Utilities and Firebase config
-│   └── public/
-├── backend/
-│   ├── functions/         # Cloud Functions
-│   ├── cloud-run/        # Cloud Run services
-│   └── scripts/          # Deployment scripts
-└── docs/                 # Product documentation
+├── CLAUDE.md             # Project instructions for Claude Code
+├── README.md             # Project overview
+├── docs/                 # Product documentation
+│   ├── phase1.md         # Current MVP implementation plan
+│   ├── styles.md         # Design system
+│   ├── architecture.md   # Technical blueprint
+│   ├── plan.md           # Phased roadmap
+│   ├── product.md        # Product vision
+│   ├── user-stories.md   # Feature requirements
+│   └── components.md     # UI component library
+└── frontend/             # React application
+    ├── src/
+    │   ├── components/   # React components
+    │   │   ├── ui/       # Base UI components
+    │   │   └── layout/   # Layout components
+    │   ├── store/        # Zustand stores
+    │   ├── lib/          # Utilities and Firebase config
+    │   └── assets/       # Static assets
+    ├── public/           # Public assets
+    ├── package.json      # Dependencies and scripts
+    ├── vite.config.ts    # Vite configuration
+    ├── tailwind.config.js # Tailwind CSS config
+    └── tsconfig.json     # TypeScript configuration
 ```
 
 ## Current Development Phase
@@ -114,8 +125,8 @@ Implementation follows `docs/phase1.md`:
 - ✅ React 18 + Vite + TypeScript + Firebase setup complete
 - ✅ Google authentication with Zustand state management  
 - ✅ Basic UI framework with Tailwind CSS
-- 🔄 Document upload/management (in progress)
-- ⏳ Milkdown editor integration (upcoming)
+- ✅ Document upload/management complete
+- 🔄 Milkdown editor integration (in progress)
 - ⏳ Mock lens generation (Slide, Study, Story) (upcoming)
 
 ## Implementation Priorities

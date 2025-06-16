@@ -4,7 +4,7 @@ import { Login } from './components/Login';
 import { AppLayout } from './components/layout/AppLayout';
 import { NavigationSidebar } from './components/NavigationSidebar';
 import { DocumentGrid } from './components/DocumentGrid';
-import { UploadZone } from './components/UploadZone';
+import { PromptUploadZone } from './components/PromptUploadZone';
 import { Container } from './components/layout/Grid';
 import { Button } from './components/ui/Button';
 import { useAuthStore } from './store/authStore';
@@ -19,18 +19,39 @@ function App() {
     {
       id: '1',
       title: 'Product Strategy 2024',
-      preview: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion.',
-      space: 'Strategy',
-      timestamp: new Date(Date.now() - 86400000), // Yesterday
-      lensTypes: ['Slide', 'Study', 'Story']
+      content: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion.',
+      originalFileName: 'product-strategy-2024.pdf',
+      fileType: 'application/pdf',
+      fileSize: 2457600, // 2.4MB
+      createdAt: new Date(Date.now() - 86400000), // Yesterday
+      updatedAt: new Date(Date.now() - 86400000),
+      userId: 'temp-user',
+      tags: ['strategy', 'product'],
+      status: 'ready' as const,
+      lenses: {
+        slide: 'Generated slide content',
+        study: 'Generated study content',
+        story: 'Generated story content'
+      },
+      preview: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion.'
     },
     {
       id: '2',
       title: 'Market Analysis Report',
-      preview: 'Detailed analysis of current market trends and competitive landscape in the document management space.',
-      space: 'Research',
-      timestamp: new Date(Date.now() - 172800000), // 2 days ago
-      lensTypes: ['Study', 'Scholar']
+      content: 'Detailed analysis of current market trends and competitive landscape in the document management space.',
+      originalFileName: 'market-analysis.docx',
+      fileType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      fileSize: 1234567, // 1.2MB
+      createdAt: new Date(Date.now() - 172800000), // 2 days ago
+      updatedAt: new Date(Date.now() - 172800000),
+      userId: 'temp-user',
+      tags: ['research', 'market'],
+      status: 'ready' as const,
+      lenses: {
+        study: 'Generated study content',
+        story: 'Generated story content'
+      },
+      preview: 'Detailed analysis of current market trends and competitive landscape in the document management space.'
     }
   ];
 
@@ -53,13 +74,18 @@ function App() {
     }
   ];
 
-  const handleDocumentClick = (doc: any) => {
+  const handleDocumentClick = (doc: { title: string }) => {
     console.log('Opening document:', doc.title);
   };
 
   const handleFileUpload = (files: File[]) => {
     console.log('Uploading files:', files);
     // TODO: Implement file upload logic
+  };
+
+  const handlePromptSubmit = (prompt: string) => {
+    console.log('Prompt submitted:', prompt);
+    // TODO: Implement prompt processing logic
   };
 
   if (loading) {
@@ -115,12 +141,14 @@ function App() {
                   </p>
                 </div>
 
-                {/* Upload Zone */}
-                <UploadZone
+                {/* Prompt Upload Zone */}
+                <PromptUploadZone
                   accept={['.pdf', '.docx', '.txt', '.md']}
                   maxSize={10 * 1024 * 1024} // 10MB
                   multiple
                   onUpload={handleFileUpload}
+                  onPromptSubmit={handlePromptSubmit}
+                  placeholder="Ask questions about your documents or drag & drop files to upload..."
                 />
 
                 {/* Recent Documents */}

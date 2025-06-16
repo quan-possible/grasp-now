@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AppLayout } from './components/layout/AppLayout';
 import { NavigationSidebar } from './components/NavigationSidebar';
 import { DocumentGrid } from './components/DocumentGrid';
-import { UploadZone } from './components/UploadZone';
+import { PromptUploadZone } from './components/PromptUploadZone';
 import { Container } from './components/layout/Grid';
 import { Button } from './components/ui/Button';
 
@@ -20,34 +20,62 @@ function AppDemo() {
     {
       id: '1',
       title: 'Product Strategy 2024',
-      preview: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion. This document outlines key initiatives, target markets, and growth objectives.',
-      space: 'Strategy',
-      timestamp: new Date(Date.now() - 86400000), // Yesterday
-      lensTypes: ['Slide', 'Study', 'Story']
+      content: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion. This document outlines key initiatives, target markets, and growth objectives.',
+      originalFileName: 'product-strategy-2024.pdf',
+      fileType: 'application/pdf',
+      fileSize: 2457600,
+      createdAt: new Date(Date.now() - 86400000),
+      updatedAt: new Date(Date.now() - 86400000),
+      userId: 'temp-user',
+      tags: ['strategy', 'product'],
+      status: 'ready' as const,
+      lenses: { slide: 'Generated slide content', study: 'Generated study content', story: 'Generated story content' },
+      preview: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion.'
     },
     {
       id: '2',
       title: 'Market Analysis Report',
-      preview: 'Detailed analysis of current market trends and competitive landscape in the document management space. Includes competitor analysis, market size, and growth opportunities.',
-      space: 'Research',
-      timestamp: new Date(Date.now() - 172800000), // 2 days ago
-      lensTypes: ['Study', 'Scholar']
+      content: 'Detailed analysis of current market trends and competitive landscape in the document management space. Includes competitor analysis, market size, and growth opportunities.',
+      originalFileName: 'market-analysis.docx',
+      fileType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      fileSize: 1234567,
+      createdAt: new Date(Date.now() - 172800000),
+      updatedAt: new Date(Date.now() - 172800000),
+      userId: 'temp-user',
+      tags: ['research', 'market'],
+      status: 'ready' as const,
+      lenses: { study: 'Generated study content' },
+      preview: 'Detailed analysis of current market trends and competitive landscape in the document management space.'
     },
     {
       id: '3',
       title: 'Team Meeting Notes',
-      preview: 'Weekly team standup notes covering project updates, blockers, and next steps. Action items and decisions from the product team meeting.',
-      space: 'Personal',
-      timestamp: new Date(Date.now() - 259200000), // 3 days ago
-      lensTypes: ['Story', 'Speed']
+      content: 'Weekly team standup notes covering project updates, blockers, and next steps. Action items and decisions from the product team meeting.',
+      originalFileName: 'team-meeting-notes.md',
+      fileType: 'text/markdown',
+      fileSize: 45678,
+      createdAt: new Date(Date.now() - 259200000),
+      updatedAt: new Date(Date.now() - 259200000),
+      userId: 'temp-user',
+      tags: ['meeting', 'team'],
+      status: 'ready' as const,
+      lenses: { story: 'Generated story content' },
+      preview: 'Weekly team standup notes covering project updates, blockers, and next steps.'
     },
     {
       id: '4',
       title: 'Technical Architecture Doc',
-      preview: 'System architecture overview for the grasp.now platform, including component diagrams, data flow, and integration points with Firebase and Google Cloud.',
-      space: 'Engineering',
-      timestamp: new Date(Date.now() - 432000000), // 5 days ago
-      lensTypes: ['Study', 'Scholar', 'Slide']
+      content: 'System architecture overview for the grasp.now platform, including component diagrams, data flow, and integration points with Firebase and Google Cloud.',
+      originalFileName: 'tech-architecture.pdf',
+      fileType: 'application/pdf',
+      fileSize: 3456789,
+      createdAt: new Date(Date.now() - 432000000),
+      updatedAt: new Date(Date.now() - 432000000),
+      userId: 'temp-user',
+      tags: ['architecture', 'technical'],
+      status: 'ready' as const,
+      lenses: { study: 'Generated study content', slide: 'Generated slide content' },
+      preview: 'System architecture overview for the grasp.now platform, including component diagrams, data flow, and integration points.'
     }
   ];
 
@@ -74,7 +102,7 @@ function AppDemo() {
     }
   ];
 
-  const handleDocumentClick = (doc: any) => {
+  const handleDocumentClick = (doc: { title: string }) => {
     console.log('Opening document:', doc.title);
     alert(`Opening document: ${doc.title}\n\nThis would open the document viewer with lens options.`);
   };
@@ -82,6 +110,11 @@ function AppDemo() {
   const handleFileUpload = (files: File[]) => {
     console.log('Uploading files:', files.map(f => f.name));
     alert(`Uploading ${files.length} file(s):\n${files.map(f => `• ${f.name}`).join('\n')}\n\nIn the full app, these would be processed and stored in Firebase.`);
+  };
+
+  const handlePromptSubmit = (prompt: string) => {
+    console.log('Prompt submitted:', prompt);
+    alert(`Prompt submitted: "${prompt}"\n\nIn the full app, this would process your request or search through documents.`);
   };
 
   const handleSignOut = () => {
@@ -140,11 +173,13 @@ function AppDemo() {
             </div>
 
             {/* Upload Zone */}
-            <UploadZone
+            <PromptUploadZone
               accept={['.pdf', '.docx', '.txt', '.md']}
               maxSize={10 * 1024 * 1024} // 10MB
               multiple
               onUpload={handleFileUpload}
+              onPromptSubmit={handlePromptSubmit}
+              placeholder="Ask or find anything from your workspace..."
             />
 
             {/* Recent Documents */}

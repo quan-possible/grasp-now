@@ -1,45 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from './ui/Card';
-
-interface Document {
-  id: string;
-  title: string;
-  preview?: string;
-  space?: string;
-  thumbnail?: string;
-  timestamp?: Date;
-  lensTypes?: string[];
-}
+import type { Document } from '../store/documentStore';
+import { formatFileSize, getFileTypeFromExtension } from '../lib/fileValidation';
 
 interface DocumentGridProps {
   documents: Document[];
   viewMode: 'grid' | 'list';
   onDocumentClick: (doc: Document) => void;
+  onDocumentDelete?: (doc: Document) => void;
+  onDocumentEdit?: (doc: Document) => void;
   loading?: boolean;
   emptyState?: React.ReactNode;
+  selectedDocuments?: string[];
+  onSelectionChange?: (selectedIds: string[]) => void;
 }
 
 interface DocumentCardProps {
-  title: string;
-  preview?: string;
-  space?: string;
-  thumbnail?: string;
-  timestamp?: Date;
-  lensTypes?: string[];
+  document: Document;
   onClick?: () => void;
+  onDelete?: () => void;
+  onEdit?: () => void;
   selected?: boolean;
+  showActions?: boolean;
 }
 
 const DocumentCard: React.FC<DocumentCardProps> = ({
-  title,
-  preview,
-  space,
-  thumbnail,
-  timestamp,
-  lensTypes = [],
+  document,
   onClick,
-  selected = false
+  onDelete,
+  onEdit,
+  selected = false,
+  showActions = true
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  const { 
+    title, 
+    preview, 
+    thumbnail, 
+    createdAt, 
+    updatedAt, 
+    lenses, 
+    fileSize, 
+    originalFileName, 
+    status,
+    tags
+  } = document;
+  
+  const lensTypes = lenses ? Object.keys(lenses).filter(key => lenses[key as keyof typeof lenses]) : [];
   const formatDate = (date: Date) => {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -51,27 +59,85 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
     if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
     return date.toLocaleDateString();
   };
+  
+  const getStatusColor = (status: Document['status']) => {
+    switch (status) {
+      case 'ready': return 'text-green-600 bg-green-50';
+      case 'processing': return 'text-yellow-600 bg-yellow-50';
+      case 'uploading': return 'text-blue-600 bg-blue-50';
+      case 'error': return 'text-red-600 bg-red-50';
+      default: return 'text-gray-600 bg-gray-50';
+    }
+  };
 
   return (
-    <Card
-      hover
+    <div
       onClick={onClick}
-      className={`transition-all duration-200 cursor-pointer ${
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`transition-all duration-200 cursor-pointer group relative ${
         selected ? 'ring-2 ring-gray-900 shadow-card-active' : ''
+      } ${
+        isHovered ? 'shadow-lg scale-[1.02] border-gray-300' : ''
       }`}
-      padding="md"
     >
-      <div className="space-y-3">
-        {/* Header with title and space */}
+      <Card
+        hover
+        className="h-full"
+        padding="md"
+      >
+        <div className="space-y-3">
+        {/* Header with title and actions */}
         <div className="flex items-start justify-between">
-          <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 leading-tight">
-            {title}
-          </h3>
-          {space && (
-            <span className="ml-2 px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg flex-shrink-0">
-              {space}
+          <div className="min-w-0 flex-1">
+            <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 leading-tight">
+              {title}
+            </h3>
+            <p className="text-xs text-gray-500 mt-1">
+              {getFileTypeFromExtension(originalFileName)} • {formatFileSize(fileSize)}
+            </p>
+          </div>
+          
+          {/* Status Badge */}
+          <div className="flex items-center space-x-2 flex-shrink-0">
+            <span className={`px-2 py-1 text-xs font-medium rounded-lg ${getStatusColor(status)}`}>
+              {status.charAt(0).toUpperCase() + status.slice(1)}
             </span>
-          )}
+            
+            {/* Action Menu */}
+            {showActions && isHovered && (
+              <div className="flex space-x-1">
+                {onEdit && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit();
+                    }}
+                    className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                    title="Edit document"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                )}
+                {onDelete && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete();
+                    }}
+                    className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                    title="Delete document"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Preview text */}
@@ -92,6 +158,25 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
           </div>
         )}
 
+        {/* Tags */}
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {tags.slice(0, 3).map((tag, index) => (
+              <span
+                key={index}
+                className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg"
+              >
+                {tag}
+              </span>
+            ))}
+            {tags.length > 3 && (
+              <span className="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg">
+                +{tags.length - 3}
+              </span>
+            )}
+          </div>
+        )}
+        
         {/* Footer with metadata */}
         <div className="flex items-center justify-between pt-2 border-t border-gray-100">
           <div className="flex items-center space-x-2">
@@ -100,13 +185,13 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
                 {lensTypes.slice(0, 3).map((lens, index) => (
                   <span
                     key={index}
-                    className="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg"
+                    className="px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg"
                   >
-                    {lens}
+                    {lens.charAt(0).toUpperCase() + lens.slice(1)}
                   </span>
                 ))}
                 {lensTypes.length > 3 && (
-                  <span className="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg">
+                  <span className="px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg">
                     +{lensTypes.length - 3}
                   </span>
                 )}
@@ -114,14 +199,20 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
             )}
           </div>
           
-          {timestamp && (
-            <span className="text-xs text-gray-500 ui-text">
-              {formatDate(timestamp)}
-            </span>
-          )}
+          <div className="text-right">
+            <div className="text-xs text-gray-500">
+              {formatDate(updatedAt)}
+            </div>
+            {createdAt.getTime() !== updatedAt.getTime() && (
+              <div className="text-xs text-gray-400">
+                Created {formatDate(createdAt)}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </Card>
+        </div>
+      </Card>
+    </div>
   );
 };
 
@@ -150,8 +241,11 @@ export const DocumentGrid: React.FC<DocumentGridProps> = ({
   documents,
   viewMode,
   onDocumentClick,
+  onDocumentDelete,
+  onDocumentEdit,
   loading = false,
-  emptyState
+  emptyState,
+  selectedDocuments = []
 }) => {
   if (loading) {
     return (
@@ -200,13 +294,11 @@ export const DocumentGrid: React.FC<DocumentGridProps> = ({
       {documents.map((doc) => (
         <DocumentCard
           key={doc.id}
-          title={doc.title}
-          preview={doc.preview}
-          space={doc.space}
-          thumbnail={doc.thumbnail}
-          timestamp={doc.timestamp}
-          lensTypes={doc.lensTypes}
+          document={doc}
+          selected={selectedDocuments.includes(doc.id)}
           onClick={() => onDocumentClick(doc)}
+          onDelete={onDocumentDelete ? () => onDocumentDelete(doc) : undefined}
+          onEdit={onDocumentEdit ? () => onDocumentEdit(doc) : undefined}
         />
       ))}
     </div>
