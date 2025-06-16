@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
 @tailwind base;
-@tailwind components;
+@tailwind components;  
 @tailwind utilities;
 
 @layer base {
@@ -10,19 +12,57 @@
   }
   
   body {
-    font-family: 'Franklin Gothic', system-ui, -apple-system, sans-serif;
-    @apply text-gray-900 bg-white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    @apply text-gray-900 bg-gray-50 leading-relaxed;
   }
   
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Cheltenham', Georgia, serif;
-    @apply font-medium text-gray-900;
+  /* NYT-inspired Typography Hierarchy */
+  h1 {
+    font-family: 'Crimson Text', Georgia, serif;
+    @apply text-4xl font-bold text-gray-900 leading-tight mb-6;
+  }
+  
+  h2 {
+    font-family: 'Crimson Text', Georgia, serif;
+    @apply text-3xl font-semibold text-gray-900 leading-tight mb-5;
+  }
+  
+  h3 {
+    font-family: 'Crimson Text', Georgia, serif;
+    @apply text-2xl font-semibold text-gray-900 leading-snug mb-4;
+  }
+  
+  h4 {
+    @apply text-xl font-semibold text-gray-900 leading-snug mb-3;
+  }
+  
+  h5 {
+    @apply text-lg font-semibold text-gray-900 leading-normal mb-3;
+  }
+  
+  h6 {
+    @apply text-base font-semibold text-gray-900 leading-normal mb-2;
+  }
+  
+  p {
+    @apply text-base text-gray-700 leading-relaxed mb-4;
+  }
+  
+  /* Article body text */
+  .article-body {
+    font-family: 'Crimson Text', Georgia, serif;
+    @apply text-lg text-gray-800 leading-relaxed;
+  }
+  
+  /* UI text */
+  .ui-text {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 }
 
 @layer components {
   .card {
-    @apply bg-white rounded-lg shadow-card hover:shadow-card-hover transition-shadow duration-200;
+    @apply bg-white rounded-lg shadow-card hover:shadow-card-hover transition-all duration-200 ease-out;
   }
   
   .btn-primary {
@@ -31,5 +71,34 @@
   
   .btn-secondary {
     @apply bg-gray-100 text-gray-900 px-6 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200;
+  }
+  
+  /* Text truncation utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Smooth focus styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500;
+  }
+  
+  /* Micro-interactions */
+  .hover-lift {
+    @apply transition-transform duration-200 ease-out hover:-translate-y-1;
+  }
+  
+  .hover-scale {
+    @apply transition-transform duration-200 ease-out hover:scale-105;
   }
 }

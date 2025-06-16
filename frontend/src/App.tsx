@@ -1,15 +1,71 @@
+import { useState } from 'react';
 import { AuthProvider } from './components/AuthProvider';
 import { Login } from './components/Login';
+import { AppLayout } from './components/layout/AppLayout';
+import { NavigationSidebar } from './components/NavigationSidebar';
+import { DocumentGrid } from './components/DocumentGrid';
+import { UploadZone } from './components/UploadZone';
+import { Container } from './components/layout/Grid';
+import { Button } from './components/ui/Button';
 import { useAuthStore } from './store/authStore';
 import { signOut } from './lib/auth';
 
 function App() {
   const { user, loading } = useAuthStore();
+  const [selectedFolder, setSelectedFolder] = useState('recents');
+
+  // Mock data for demo
+  const mockDocuments = [
+    {
+      id: '1',
+      title: 'Product Strategy 2024',
+      preview: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion.',
+      space: 'Strategy',
+      timestamp: new Date(Date.now() - 86400000), // Yesterday
+      lensTypes: ['Slide', 'Study', 'Story']
+    },
+    {
+      id: '2',
+      title: 'Market Analysis Report',
+      preview: 'Detailed analysis of current market trends and competitive landscape in the document management space.',
+      space: 'Research',
+      timestamp: new Date(Date.now() - 172800000), // 2 days ago
+      lensTypes: ['Study', 'Scholar']
+    }
+  ];
+
+  const mockFolders = [
+    {
+      id: 'strategy',
+      name: 'Strategy',
+      children: [
+        { id: 'quarterly', name: 'Quarterly Reviews' },
+        { id: 'planning', name: 'Planning' }
+      ]
+    },
+    {
+      id: 'research',
+      name: 'Research'
+    },
+    {
+      id: 'personal',
+      name: 'Personal'
+    }
+  ];
+
+  const handleDocumentClick = (doc: any) => {
+    console.log('Opening document:', doc.title);
+  };
+
+  const handleFileUpload = (files: File[]) => {
+    console.log('Uploading files:', files);
+    // TODO: Implement file upload logic
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-gray-300 border-t-gray-900"></div>
       </div>
     );
   }
@@ -17,39 +73,96 @@ function App() {
   return (
     <AuthProvider>
       {user ? (
-        <div className="min-h-screen bg-gray-50">
-          <header className="bg-white shadow-sm border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between items-center h-16">
-                <h1 className="text-2xl font-bold text-gray-900">grasp.now</h1>
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-700">Welcome, {user.displayName}</span>
-                  <button
-                    onClick={signOut}
-                    className="btn-secondary"
-                  >
-                    Sign Out
-                  </button>
+        <AppLayout
+          sidebar={
+            <NavigationSidebar
+              user={{ name: user.displayName || 'User' }}
+              folders={mockFolders}
+              activeItem={selectedFolder}
+              onFolderSelect={setSelectedFolder}
+              onCreateFolder={() => console.log('Create folder')}
+            />
+          }
+          header={
+            <div className="flex-1 flex items-center justify-between px-6">
+              <div className="flex items-center">
+                <h1 className="text-xl font-bold text-gray-900 ui-text">grasp.now</h1>
+              </div>
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-700 ui-text">
+                  Welcome, {user.displayName}
+                </span>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={signOut}
+                >
+                  Sign Out
+                </Button>
+              </div>
+            </div>
+          }
+          main={
+            <Container size="full" className="py-8">
+              <div className="space-y-8">
+                {/* Page Header */}
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Good afternoon, {user.displayName?.split(' ')[0]}
+                  </h2>
+                  <p className="text-gray-600">
+                    Transform your documents with intelligent lenses
+                  </p>
+                </div>
+
+                {/* Upload Zone */}
+                <UploadZone
+                  accept={['.pdf', '.docx', '.txt', '.md']}
+                  maxSize={10 * 1024 * 1024} // 10MB
+                  multiple
+                  onUpload={handleFileUpload}
+                />
+
+                {/* Recent Documents */}
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Recent Documents
+                    </h3>
+                    <Button variant="ghost" size="sm">
+                      View All
+                    </Button>
+                  </div>
+
+                  <DocumentGrid
+                    documents={mockDocuments}
+                    viewMode="grid"
+                    onDocumentClick={handleDocumentClick}
+                  />
+                </div>
+
+                {/* Getting Started */}
+                <div className="card p-8 text-center bg-gradient-to-br from-gray-50 to-white">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    🚀 Phase 1 MVP Implementation Complete
+                  </h3>
+                  <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                    Core UI framework with NYT-inspired design system, responsive layouts, 
+                    and smooth animations. Ready for document management and lens integration.
+                  </p>
+                  <div className="flex justify-center space-x-4">
+                    <Button variant="primary">
+                      Upload Document
+                    </Button>
+                    <Button variant="secondary">
+                      Learn More
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </header>
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="card p-8 text-center">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Welcome to grasp.now
-              </h2>
-              <p className="text-gray-600 mb-8">
-                Transform your documents with intelligent lenses
-              </p>
-              <div className="bg-gray-100 p-6 rounded-lg">
-                <p className="text-sm text-gray-600">
-                  🚀 MVP Phase 1 in progress - Document management and lens system coming soon!
-                </p>
-              </div>
-            </div>
-          </main>
-        </div>
+            </Container>
+          }
+        />
       ) : (
         <Login />
       )}

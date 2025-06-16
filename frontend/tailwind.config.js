@@ -7,8 +7,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'heading': ['Cheltenham', 'Georgia', 'serif'],
-        'body': ['Franklin Gothic', 'Arial', 'sans-serif'],
+        'serif': ['Crimson Text', 'Georgia', 'Times New Roman', 'serif'],
+        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        'heading': ['Crimson Text', 'Georgia', 'serif'],
+        'body': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       colors: {
         gray: {
