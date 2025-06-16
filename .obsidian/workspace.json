@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/architecture.md",
+                "file": "docs/plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "architecture"
+              "title": "plan"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/architecture.md",
+                "file": "docs/plan.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for architecture"
+              "title": "Backlinks for plan"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/architecture.md",
+                "file": "docs/plan.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from architecture"
+              "title": "Outgoing links from plan"
             }
           },
           {
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/architecture.md",
+                "file": "docs/plan.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of architecture"
+              "title": "Outline of plan"
             }
           }
         ]
@@ -169,5 +169,47 @@
     }
   },
   "active": "f1d668ae5049c0a9",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "docs/product.md",
+    "docs/styles.md",
+    "docs/user-stories.md",
+    "docs/testing.md",
+    "docs/components.md",
+    "docs/phase1.md",
+    "docs/milkdown.md",
+    "docs/code.md",
+    "Untitled 1",
+    "Untitled",
+    "docs/architecture.md",
+    "frontend/src/components/reading/LensSelector.tsx",
+    "frontend/src/components/reading/LensSelectorOld.tsx",
+    "frontend/src/components/reading/LensSelectorNew.tsx",
+    "frontend/src/hooks/useLens.ts",
+    "frontend/src/hooks",
+    "frontend/src/lib/lensService.ts",
+    "frontend/src/components/reading/MilkdownEditor.tsx",
+    "frontend/tests/fixtures/sample-document.txt",
+    "frontend/tests/fixtures/README.md",
+    "frontend/node_modules/playwright-core/README.md",
+    "frontend/node_modules/@playwright/test/README.md",
+    "frontend/node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg",
+    "frontend/node_modules/playwright-core/lib/vite/recorder/playwright-logo.svg",
+    "frontend/node_modules/playwright-core/lib/server/chromium/appIcon.png",
+    "frontend/node_modules/playwright/README.md",
+    "frontend/node_modules/playwright/node_modules/fsevents/README.md",
+    "frontend/node_modules/cookie/README.md",
+    "frontend/node_modules/@types/history/README.md",
+    "frontend/node_modules/@types/react-router-dom/README.md",
+    "frontend/node_modules/set-cookie-parser/README.md",
+    "frontend/node_modules/react-router/README.md",
+    "frontend/node_modules/react-router/LICENSE.md",
+    "frontend/node_modules/react-router/CHANGELOG.md",
+    "frontend/node_modules/react-router-dom/README.md",
+    "frontend/node_modules/react-router-dom/LICENSE.md",
+    "frontend/node_modules/@types/react-router/README.md",
+    "frontend/node_modules/lodash-es/release.md",
+    "frontend/node_modules/lodash-es/README.md",
+    "frontend/src/assets/react.svg",
+    "frontend/public/vite.svg"
+  ]
 }
