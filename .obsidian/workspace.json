@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/plan.md",
+                "file": "docs/components.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "plan"
+              "title": "components"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/plan.md",
+                "file": "docs/components.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for plan"
+              "title": "Backlinks for components"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/plan.md",
+                "file": "docs/components.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from plan"
+              "title": "Outgoing links from components"
             }
           },
           {
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/plan.md",
+                "file": "docs/components.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of plan"
+              "title": "Outline of components"
             }
           }
         ]
@@ -170,6 +170,31 @@
   },
   "active": "f1d668ae5049c0a9",
   "lastOpenFiles": [
+    "frontend/test-results/user-authentication-User-A-76dc5--and-redirect-to-login-page-chromium/video.webm",
+    "frontend/test-results/user-authentication-User-A-76dc5--and-redirect-to-login-page-chromium/test-failed-1.png",
+    "frontend/test-results/user-authentication-User-A-76dc5--and-redirect-to-login-page-chromium",
+    "frontend/test-results/document-management-Docume-016a8-responsive-layout-on-mobile-firefox/video.webm",
+    "frontend/test-results/document-management-Docume-016a8-responsive-layout-on-mobile-firefox/test-failed-1.png",
+    "frontend/test-results/document-management-Docume-016a8-responsive-layout-on-mobile-firefox",
+    "frontend/test-results/document-management-Docume-5decc-uld-show-sidebar-navigation-firefox/video.webm",
+    "frontend/test-results/document-management-Docume-5decc-uld-show-sidebar-navigation-firefox/test-failed-1.png",
+    "frontend/test-results/document-management-Docume-5decc-uld-show-sidebar-navigation-firefox",
+    "frontend/test-results/document-management-Docume-3ae78-d-show-user-welcome-message-firefox/video.webm",
+    "frontend/test-results/document-management-Docume-3ae78-d-show-user-welcome-message-firefox/test-failed-1.png",
+    "frontend/test-results/document-management-Docume-3ae78-d-show-user-welcome-message-firefox",
+    "frontend/test-results/document-management-Docume-b4bed-how-getting-started-section-firefox/video.webm",
+    "frontend/test-results/document-management-Docume-b4bed-how-getting-started-section-firefox/test-failed-1.png",
+    "frontend/test-results/document-management-Docume-b4bed-how-getting-started-section-firefox",
+    "frontend/test-results/document-management-Docume-1b54b-ow-recent-documents-section-firefox/video.webm",
+    "frontend/test-results/document-management-Docume-1b54b-ow-recent-documents-section-firefox/test-failed-1.png",
+    "frontend/test-results/document-management-Docume-552f9-ument-cards-with-basic-info-firefox/test-failed-1.png",
+    "frontend/test-results/document-management-Docume-24d4d-der-organization-in-sidebar-firefox/test-failed-1.png",
+    "frontend/test-results/document-management-Docume-30409-ay-documents-in-grid-layout-firefox/test-failed-1.png",
+    "frontend/test-results/document-editing-Document--48cae-hentication-on-reading-page-firefox/test-failed-1.png",
+    "frontend/src/components/code.md",
+    "frontend/node_modules/lucide-react/README.md",
+    "test-document.md",
+    "docs/plan.md",
     "docs/product.md",
     "docs/styles.md",
     "docs/user-stories.md",
@@ -178,23 +203,10 @@
     "docs/phase1.md",
     "docs/milkdown.md",
     "docs/code.md",
-    "Untitled 1",
-    "Untitled",
     "docs/architecture.md",
-    "frontend/src/components/reading/LensSelector.tsx",
-    "frontend/src/components/reading/LensSelectorOld.tsx",
-    "frontend/src/components/reading/LensSelectorNew.tsx",
-    "frontend/src/hooks/useLens.ts",
-    "frontend/src/hooks",
-    "frontend/src/lib/lensService.ts",
-    "frontend/src/components/reading/MilkdownEditor.tsx",
-    "frontend/tests/fixtures/sample-document.txt",
     "frontend/tests/fixtures/README.md",
     "frontend/node_modules/playwright-core/README.md",
     "frontend/node_modules/@playwright/test/README.md",
-    "frontend/node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg",
-    "frontend/node_modules/playwright-core/lib/vite/recorder/playwright-logo.svg",
-    "frontend/node_modules/playwright-core/lib/server/chromium/appIcon.png",
     "frontend/node_modules/playwright/README.md",
     "frontend/node_modules/playwright/node_modules/fsevents/README.md",
     "frontend/node_modules/cookie/README.md",
@@ -203,13 +215,6 @@
     "frontend/node_modules/set-cookie-parser/README.md",
     "frontend/node_modules/react-router/README.md",
     "frontend/node_modules/react-router/LICENSE.md",
-    "frontend/node_modules/react-router/CHANGELOG.md",
-    "frontend/node_modules/react-router-dom/README.md",
-    "frontend/node_modules/react-router-dom/LICENSE.md",
-    "frontend/node_modules/@types/react-router/README.md",
-    "frontend/node_modules/lodash-es/release.md",
-    "frontend/node_modules/lodash-es/README.md",
-    "frontend/src/assets/react.svg",
-    "frontend/public/vite.svg"
+    "frontend/node_modules/react-router/CHANGELOG.md"
   ]
 }

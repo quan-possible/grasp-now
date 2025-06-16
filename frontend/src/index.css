@@ -2,6 +2,106 @@
 @tailwind components;  
 @tailwind utilities;
 
+:root {
+  /* Base surfaces */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #FAFAFA;
+  --bg-tertiary: #F5F5F5;
+  --bg-page: #FCFCFC;
+
+  /* Type */
+  --text-primary: #171717;
+  --text-secondary: #616161;
+  --text-tertiary: #9E9E9E;
+
+  /* Borders (rare) */
+  --border-primary: #E0E0E0;
+  --border-secondary: #CFCFCF;
+
+  /* Accent */
+  --accent: #2563EB;
+  --accent-hover: #1E4FDB;
+
+  /* Semantic feedback */
+  --success: #16A34A;
+  --warning: #F97316;
+  --error: #DC2626;
+
+  /* Pastel system */
+  --pastel-red: #FEE2E2;
+  --pastel-yellow: #FEF9C3;
+  --pastel-pink: #FCE7F3;
+  --pastel-teal: #CCFBF1;
+
+  /* Typography */
+  --font-display: 'Cheltenham', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Layout */
+  --measure-article: 620px;
+  --width-drawer: 320px;
+  --gap-masonry: 16px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md: 0 2px 6px rgba(0,0,0,.06);
+  --shadow-lg: 0 8px 20px rgba(0,0,0,.08);
+  --shadow-stack: 0 4px 8px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.12), 0 8px 16px rgba(0,0,0,.04);
+  --shadow-active: 0 12px 32px rgba(0,0,0,.12);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration-normal: 220ms;
+  --ease: cubic-bezier(.4,0,.2,1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #121212;
+    --bg-secondary: #181818;
+    --bg-tertiary: #262626;
+    --bg-page: #101010;
+
+    --text-primary: #F5F5F5;
+    --text-secondary: #BDBDBD;
+    --text-tertiary: #757575;
+
+    --border-primary: #262626;
+    --border-secondary: #3D3D3D;
+
+    --accent: #5F9BFF;
+    --accent-hover: #8AB4FF;
+
+    --success: #22C55E;
+    --warning: #FB923C;
+    --error: #F87171;
+
+    --pastel-red: #5C1E1E;
+    --pastel-yellow: #5C5015;
+    --pastel-pink: #5C1E4A;
+    --pastel-teal: #134E4A;
+  }
+}
+
 @layer base {
   * {
     font-synthesis: none;
@@ -11,45 +111,45 @@
   
   body {
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    @apply text-text-primary bg-bg-secondary leading-normal;
+    @apply text-text-primary bg-bg-page leading-normal;
   }
   
-  /* Typography Hierarchy - Design System */
+  /* Typography Hierarchy - Design System v3.1 */
   h1 {
     font-family: Cheltenham, Georgia, 'Times New Roman', serif;
-    @apply text-5xl font-bold text-text-primary leading-tight mb-6;
+    @apply text-3xl font-bold text-text-primary leading-tight mb-6;
   }
   
   h2 {
     font-family: Cheltenham, Georgia, 'Times New Roman', serif;
-    @apply text-4xl font-semibold text-text-primary leading-tight mb-5;
+    @apply text-3xl font-bold text-text-primary leading-tight mb-5;
   }
   
   h3 {
     font-family: Cheltenham, Georgia, 'Times New Roman', serif;
-    @apply text-3xl font-semibold text-text-primary leading-normal mb-4;
+    @apply text-2xl font-semibold text-text-primary leading-tight mb-4;
   }
   
   h4 {
-    @apply text-2xl font-semibold text-text-primary leading-normal mb-3;
+    @apply text-xl font-semibold text-text-primary leading-tight mb-3;
   }
   
   h5 {
-    @apply text-xl font-semibold text-text-primary leading-normal mb-3;
+    @apply text-lg font-semibold text-text-primary leading-normal mb-3;
   }
   
   h6 {
-    @apply text-lg font-semibold text-text-primary leading-normal mb-2;
+    @apply text-lg font-medium text-text-primary leading-normal mb-2;
   }
   
   p {
-    @apply text-base text-text-secondary leading-normal mb-4;
+    @apply text-lg text-text-secondary leading-normal mb-4;
   }
   
   /* Lens-specific content overrides */
   .editor-container { 
     --font-content: theme('fontFamily.sans'); 
-    --text-content: theme('fontSize.base'); 
+    --text-content: theme('fontSize.lg'); 
     --leading-content: theme('lineHeight.normal'); 
   }
   .editor-container.lens-story { 
@@ -61,6 +161,18 @@
     --font-content: theme('fontFamily.sans'); 
     --text-content: theme('fontSize.xl'); 
     --leading-content: theme('lineHeight.tight'); 
+  }
+  
+  /* Reading sheet pattern */
+  .reading-page {
+    background: theme('colors.bg-page');
+    @apply flex justify-center;
+  }
+  
+  .paper-sheet {
+    background: theme('colors.bg-primary');
+    max-width: theme('maxWidth.article');
+    @apply w-full px-6 py-8 shadow-md rounded-xl;
   }
 }
 
@@ -84,7 +196,16 @@
   }
   
   .btn-secondary {
-    @apply bg-bg-tertiary text-text-primary px-4 py-2 rounded-lg font-medium font-sans border border-border-primary hover:bg-border-primary transition-all duration-fast ease-in-out active:scale-[0.98];
+    @apply bg-bg-tertiary text-text-primary px-4 py-2 rounded-lg font-medium font-sans hover:bg-bg-secondary transition-all duration-fast ease-in-out active:scale-[0.97];
+  }
+  
+  .btn-muted {
+    @apply bg-pastel-teal text-text-primary px-4 py-2 rounded-lg font-medium font-sans transition-all duration-fast ease-in-out;
+  }
+  
+  .btn-muted[aria-selected="true"],
+  .btn-toggle.is-selected {
+    @apply bg-pastel-red text-accent;
   }
   
   /* Interaction States */
@@ -97,12 +218,12 @@
   }
   
   .active-scale:active { 
-    @apply scale-[0.98]; 
+    @apply scale-[0.97]; 
   }
   
   /* Tag Pills */
   .tag-pill {
-    @apply font-sans font-medium text-xs px-2 py-1 rounded-full transition-all duration-fast ease-in-out;
+    @apply bg-pastel-yellow text-text-primary font-sans font-medium text-xs px-2 py-1 rounded-full transition-all duration-fast ease-in-out;
     @apply hover:-translate-y-0.5 hover:shadow-sm active:scale-95;
   }
   

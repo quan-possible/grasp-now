@@ -1,21 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDocumentStore } from '../store/documentStore';
 import { ChevronLeft, MoreHorizontal } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import LensSelector from '../components/reading/LensSelector';
 import DocumentEditor from '../components/reading/DocumentEditor';
-import DocumentHeader from '../components/reading/DocumentHeader';
 import { useLens } from '../hooks/useLens';
 
 export default function ReadingPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getDocument } = useDocumentStore();
-  const [isMobile, setIsMobile] = useState(false);
-  const [mobileView, setMobileView] = useState<'editor' | 'lenses'>('editor');
+  const { getDocument, documents } = useDocumentStore();
+  // Mobile responsiveness removed for new layout
+  // const [isMobile, setIsMobile] = useState(false);
+  // const [mobileView, setMobileView] = useState<'editor' | 'lenses'>('editor');
   
-  const document = id ? getDocument(id) : null;
+  // Check for placeholder document first
+  let document = id ? getDocument(id) : null;
+  
+  // If document not found in store, check sessionStorage for placeholder
+  if (!document && id?.startsWith('placeholder-')) {
+    const placeholderData = sessionStorage.getItem(`doc-${id}`);
+    if (placeholderData) {
+      const placeholder = JSON.parse(placeholderData);
+      document = {
+        id: placeholder.id,
+        title: placeholder.title,
+        content: `# ${placeholder.title}\n\nProcessing your document...\n\nFile: ${placeholder.fileName}\nSize: ${(placeholder.fileSize / 1024 / 1024).toFixed(2)} MB\nType: ${placeholder.fileType}\n\n## Content Preview\n\nYour document is being processed. The full content and lenses will be available shortly.`,
+        originalFileName: placeholder.fileName,
+        fileType: placeholder.fileType,
+        fileSize: placeholder.fileSize,
+        createdAt: new Date(placeholder.uploadedAt),
+        updatedAt: new Date(placeholder.uploadedAt),
+        userId: 'temp-user',
+        folderId: null,
+        tags: [],
+        lenses: {
+          slide: `# ${placeholder.title} - Slides\n\n## Processing...\n\nGenerating slide view...`,
+          study: `# ${placeholder.title} - Study Notes\n\n## Processing...\n\nGenerating study notes...`,
+          story: `# ${placeholder.title} - Story\n\n## Processing...\n\nGenerating narrative view...`
+        },
+        status: 'processing' as const
+      };
+    }
+  }
+  
+  // Debug logging
+  React.useEffect(() => {
+    console.log('ReadingPage - Document ID:', id);
+    console.log('ReadingPage - Found document:', document);
+    console.log('ReadingPage - All documents:', documents);
+  }, [id, document, documents]);
   
   // Use the lens management hook
   const {
@@ -26,15 +61,16 @@ export default function ReadingPage() {
     updateLensContent
   } = useLens(document, 'slide');
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  // Mobile detection removed for new layout
+  // useEffect(() => {
+  //   const checkMobile = () => {
+  //     setIsMobile(window.innerWidth < 768);
+  //   };
+  //   
+  //   checkMobile();
+  //   window.addEventListener('resize', checkMobile);
+  //   return () => window.removeEventListener('resize', checkMobile);
+  // }, []);
 
   // Loading state
   if (id && !document) {
@@ -81,7 +117,7 @@ export default function ReadingPage() {
             <Button onClick={() => navigate('/documents')}>
               Back to Documents
             </Button>
-            <Button variant="outline" onClick={() => window.location.reload()}>
+            <Button variant="secondary" onClick={() => window.location.reload()}>
               Retry
             </Button>
           </div>
@@ -91,85 +127,78 @@ export default function ReadingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
-      <header className="border-b border-border-primary bg-bg-primary sticky top-0 z-40">
-        <div className="flex items-center justify-between h-16 px-4 md:px-6">
+      <header className="border-b border-gray-200 bg-white sticky top-0 z-40">
+        <div className="flex items-center justify-between h-14 px-6">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/documents')}
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 text-gray-600 hover:text-gray-900"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="hidden md:inline">Documents</span>
             </Button>
-            <div className="h-8 w-px bg-border-primary hidden md:block" />
-            <h1 className="font-display text-lg md:text-xl font-semibold text-text-primary truncate max-w-[200px] md:max-w-none">
+            <h1 className="font-serif text-xl font-normal text-gray-900">
               {document.title}
             </h1>
           </div>
-          <Button variant="ghost" size="sm">
-            <MoreHorizontal className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+              Share
+            </Button>
+            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+              Account Settings
+            </Button>
+            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+              <MoreHorizontal className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </header>
 
-      {/* Document Header with Formatting Toolbar */}
-      <DocumentHeader document={document} />
-
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col md:flex-row relative">
-        {/* Mobile Tabs */}
-        {isMobile && (
-          <div className="border-b border-border-primary bg-bg-primary sticky top-[112px] z-30">
-            <div className="flex">
-              <button
-                onClick={() => setMobileView('editor')}
-                className={`flex-1 px-4 py-3 font-sans text-sm font-medium transition-all duration-normal ease-in-out ${
-                  mobileView === 'editor'
-                    ? 'text-text-primary border-b-2 border-accent bg-bg-primary'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
-                }`}
-              >
-                Editor
-              </button>
-              <button
-                onClick={() => setMobileView('lenses')}
-                className={`flex-1 px-4 py-3 font-sans text-sm font-medium transition-all duration-normal ease-in-out ${
-                  mobileView === 'lenses'
-                    ? 'text-text-primary border-b-2 border-accent bg-bg-primary'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
-                }`}
-              >
-                Lenses
-              </button>
+      <div className="flex-1 flex">
+        {/* Document Editor - Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Toolbar */}
+          <div className="border-b border-gray-200 bg-gray-50 px-6 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                  AI
+                </Button>
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                  Format
+                </Button>
+              </div>
+              <div className="flex items-center gap-4">
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                  Chat
+                </Button>
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                  Versions
+                </Button>
+              </div>
             </div>
           </div>
-        )}
-
-        {/* Document Editor - Left Panel */}
-        <div 
-          className={`flex-1 transition-opacity duration-300 ${
-            isMobile && mobileView !== 'editor' ? 'hidden opacity-0' : 'block opacity-100'
-          } md:block md:opacity-100`}
-        >
-          <DocumentEditor 
-            document={document}
-            selectedLens={selectedLens}
-            lensContent={lensContent}
-            onContentChange={updateLensContent}
-          />
+          
+          {/* Document Content */}
+          <div className="flex-1 overflow-y-auto">
+            <DocumentEditor 
+              document={document}
+              selectedLens={selectedLens}
+              lensContent={lensContent}
+              onContentChange={updateLensContent}
+            />
+          </div>
         </div>
 
-        {/* Lens Selector - Right Panel */}
-        <div 
-          className={`w-full md:w-96 lg:w-[420px] border-l border-border-primary bg-bg-secondary transition-opacity duration-normal ease-in-out ${
-            isMobile && mobileView !== 'lenses' ? 'hidden opacity-0' : 'block opacity-100'
-          } md:block md:opacity-100`}
-        >
+        {/* Lens Selector - Right Sidebar */}
+        <div className="w-80 border-l border-gray-200 bg-gray-50 flex flex-col">
           <LensSelector
+            document={document}
             selectedLens={selectedLens}
             availableLenses={availableLenses}
             onLensSelect={selectLens}

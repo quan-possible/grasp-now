@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDocumentStore } from '../store/documentStore';
-import type { Folder } from '../store/documentStore';
+import type { Folder } from '../types';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Modal } from './ui/Modal';

@@ -22,12 +22,10 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
   const [showModal, setShowModal] = useState(false);
   const { uploading } = useDocumentStore();
 
-  const handleUploadComplete = () => {
+  const handleUploadComplete = (documentIds: string[]) => {
     // This will be called when files are successfully uploaded
     if (onUploadComplete) {
-      // For now, we'll just pass empty array since we don't have the IDs immediately
-      // In a real implementation, we'd track the upload results
-      onUploadComplete([]);
+      onUploadComplete(documentIds);
     }
     
     // Auto-close modal after upload completes
@@ -39,7 +37,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
   const UploadComponent = (
     <UploadZone
       folderId={folderId}
-      onUpload={handleUploadComplete}
+      onUploadComplete={handleUploadComplete}
       className={className}
     />
   );

@@ -1,32 +1,13 @@
-import React from 'react';
-import { Document } from '../../types';
-import { LensType, LensDefinition } from '../../lib/lensService';
-import { 
-  Presentation, 
-  BookOpen, 
-  Newspaper, 
-  GraduationCap,
-  Zap,
-  FileQuestion,
-  Check
-} from 'lucide-react';
+import type { DocumentType } from '../../types';
+import type { LensType, LensDefinition } from '../../lib/lensService';
 
 interface LensSelectorProps {
-  document: Document;
+  document: DocumentType;
   selectedLens: LensType;
   availableLenses: LensDefinition[];
   onLensSelect: (lens: LensType) => void;
 }
 
-// Icon mapping for lens types
-const LENS_ICONS: Record<string, React.ElementType> = {
-  Presentation,
-  BookOpen,
-  Newspaper,
-  GraduationCap,
-  Zap,
-  FileQuestion
-};
 
 // Mock preview content for available lenses
 const LENS_PREVIEWS: Record<LensType, string[]> = {
@@ -65,95 +46,52 @@ export default function LensSelector({ selectedLens, availableLenses, onLensSele
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="px-4 md:px-6 py-4 border-b border-border-primary bg-bg-primary">
-        <h2 className="font-display text-lg font-semibold text-text-primary">Available Document Versions</h2>
-        <p className="text-sm text-text-secondary font-sans mt-1">
-          Select a lens to transform your document
-        </p>
+      <div className="px-6 py-4 border-b border-gray-200">
+        <h2 className="font-sans text-sm font-medium text-gray-500 uppercase tracking-wide">Available Document Versions</h2>
       </div>
 
-      {/* Lens Cards */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
-        <div className="space-y-4">
+      {/* Lens List */}
+      <div className="flex-1 overflow-y-auto py-4">
+        <div className="space-y-1">
           {availableLenses.map((lens) => {
-            const IconComponent = LENS_ICONS[lens.icon];
-            const mockContent = LENS_PREVIEWS[lens.id];
-            
             return (
               <button
                 key={lens.id}
                 onClick={() => lens.status === 'available' && onLensSelect(lens.id)}
                 disabled={lens.status === 'locked'}
-                className={`w-full text-left transition-all duration-normal ease-in-out ${
+                className={`w-full text-left px-6 py-4 transition-all duration-200 ease-in-out border-l-4 ${
+                  selectedLens === lens.id
+                    ? 'bg-white border-l-blue-500 shadow-sm'
+                    : 'border-l-transparent hover:bg-gray-100'
+                } ${
                   lens.status === 'locked' 
                     ? 'opacity-50 cursor-not-allowed' 
-                    : 'hover:shadow-lg hover:-translate-y-0.5 active:shadow-md active:scale-[0.98]'
+                    : ''
                 }`}
               >
-                <div 
-                  className={`bg-bg-primary rounded-xl border p-4 transition-all duration-fast ease-in-out ${
-                    selectedLens === lens.id 
-                      ? 'border-accent shadow-lg ring-2 ring-accent ring-opacity-20' 
-                      : 'border-border-primary shadow-md'
-                  }`}
-                >
-                  {/* Header */}
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg transition-all duration-fast ease-in-out ${
-                        selectedLens === lens.id ? 'bg-accent' : 'bg-bg-tertiary'
-                      }`}>
-                        {IconComponent && (
-                          <IconComponent className={`w-5 h-5 ${
-                            selectedLens === lens.id ? 'text-white' : 'text-text-secondary'
-                          }`} />
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="font-sans font-semibold text-sm text-text-primary">
-                          {lens.name}
-                        </h3>
-                        <p className="text-xs text-text-secondary mt-0.5">
-                          {lens.description}
-                        </p>
-                      </div>
+                <div className="space-y-2">
+                  <h3 className="font-sans font-medium text-gray-900 text-sm">
+                    {lens.name}
+                  </h3>
+                  <div className="bg-gray-100 rounded-md p-3">
+                    <div className="space-y-1">
+                      {LENS_PREVIEWS[lens.id]?.slice(0, 4).map((line, index) => (
+                        <div 
+                          key={index} 
+                          className={`text-xs text-gray-600 ${
+                            line === '' ? 'h-2' : ''
+                          }`}
+                        >
+                          {line || '\u00A0'}
+                        </div>
+                      ))}
                     </div>
-                    {lens.status === 'available' && selectedLens === lens.id && (
-                      <Check className="w-5 h-5 text-success" />
-                    )}
                   </div>
-
-                  {/* Preview */}
-                  {lens.status === 'available' && mockContent.length > 0 && (
-                    <div className="mt-3 p-3 bg-bg-tertiary rounded-lg border border-border-primary">
-                      <div className="space-y-1">
-                        {mockContent.slice(0, 4).map((line, index) => (
-                          <div 
-                            key={index} 
-                            className={`text-xs text-text-secondary font-mono ${
-                              line === '' ? 'h-2' : ''
-                            }`}
-                          >
-                            {line || '\u00A0'}
-                          </div>
-                        ))}
-                        {mockContent.length > 4 && (
-                          <div className="text-xs text-text-tertiary font-mono">...</div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Status */}
+                  
+                  {/* Status indicator */}
                   {lens.status === 'locked' && (
-                    <div className="mt-3 px-3 py-2 bg-bg-tertiary rounded-lg text-xs text-text-tertiary font-sans text-center">
+                    <div className="text-xs text-gray-400">
                       Coming in Phase {lens.phase}
-                    </div>
-                  )}
-
-                  {lens.status === 'generating' && (
-                    <div className="mt-3 px-3 py-2 bg-tag-teal rounded-lg text-xs text-accent font-sans text-center">
-                      Generating lens...
                     </div>
                   )}
                 </div>
@@ -162,23 +100,6 @@ export default function LensSelector({ selectedLens, availableLenses, onLensSele
           })}
         </div>
 
-        {/* Info Card */}
-        <div className="mt-6 p-4 bg-tag-teal rounded-xl border border-border-primary">
-          <div className="flex gap-3">
-            <div className="text-accent mt-0.5">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-sans text-text-primary">
-                <span className="font-semibold">Tip:</span> Each lens presents your document 
-                in a different format optimized for specific learning needs. Try switching 
-                between lenses to find the best view for your current task.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

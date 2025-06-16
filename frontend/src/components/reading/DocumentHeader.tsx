@@ -1,4 +1,4 @@
-import React from 'react';
+// React import removed - not using React namespace
 import { 
   Bold, 
   Italic, 
@@ -12,13 +12,13 @@ import {
   Heading3,
   Type
 } from 'lucide-react';
-import { Document } from '../../types';
+import type { DocumentType } from '../../types';
 
 interface DocumentHeaderProps {
-  document: Document;
+  document: DocumentType;
 }
 
-export default function DocumentHeader({}: DocumentHeaderProps) {
+export default function DocumentHeader({ document: _document }: DocumentHeaderProps) { // eslint-disable-line @typescript-eslint/no-unused-vars
   const formatButtons = [
     { icon: Bold, label: 'Bold', shortcut: '⌘B' },
     { icon: Italic, label: 'Italic', shortcut: '⌘I' },

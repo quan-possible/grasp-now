@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { MilkdownEditor } from './MilkdownEditor';
 import { Button } from './ui/Button';
-import { useDocumentStore, type Document } from '../store/documentStore';
+import { useDocumentStore } from '../store/documentStore';
+import type { DocumentType } from '../types';
 
-interface DocumentEditorProps {
-  document: Document;
+interface StandaloneEditorProps {
+  document: DocumentType;
   onClose: () => void;
   className?: string;
 }
 
-export const DocumentEditor: React.FC<DocumentEditorProps> = ({
+export const StandaloneEditor: React.FC<StandaloneEditorProps> = ({
   document,
   onClose,
   className = '',
@@ -20,23 +21,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const { updateDocument } = useDocumentStore();
 
-  // Auto-save functionality
-  useEffect(() => {
-    if (!hasChanges) return;
-
-    const timer = setTimeout(async () => {
-      await handleSave();
-    }, 2000); // Auto-save after 2 seconds of inactivity
-
-    return () => clearTimeout(timer);
-  }, [content, hasChanges]);
-
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
     setHasChanges(newContent !== document.content);
   };
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!hasChanges) return;
 
     setIsSaving(true);
@@ -52,7 +42,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [hasChanges, content, document.id, updateDocument]);
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (!hasChanges) return;
+
+    const timer = setTimeout(async () => {
+      await handleSave();
+    }, 2000); // Auto-save after 2 seconds of inactivity
+
+    return () => clearTimeout(timer);
+  }, [content, hasChanges, handleSave]);
 
   const handleExport = () => {
     // Create a downloadable file with the markdown content
@@ -135,4 +136,4 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   );
 };
 
-export default DocumentEditor;
+export default StandaloneEditor;

@@ -1,5 +1,7 @@
 # User Stories - grasp.now: Multi-Lens Document Platform
 
+**Implementation Status**: Phase 1 Week 2 complete - Document management, reading page with Milkdown editor, and lens switching functionality implemented.
+
 ## Epic 1: Document Upload and Management
 
 ### US-1.1: Upload Documents

@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Document } from '../types';
-import { LensService, LensType, LensDefinition } from '../lib/lensService';
+import type { DocumentType } from '../types';
+import { LensService, type LensType, type LensDefinition, LENS_DEFINITIONS } from '../lib/lensService';
 
 interface UseLensReturn {
   selectedLens: LensType;
@@ -12,7 +12,7 @@ interface UseLensReturn {
   getLensDefinition: (lensType: LensType) => LensDefinition;
 }
 
-export function useLens(document: Document | null, initialLens: LensType = 'slide'): UseLensReturn {
+export function useLens(document: DocumentType | null, initialLens: LensType = 'slide'): UseLensReturn {
   const [selectedLens, setSelectedLens] = useState<LensType>(initialLens);
   const [lensContentCache, setLensContentCache] = useState<Record<string, string>>({});
 
@@ -65,7 +65,7 @@ export function useLens(document: Document | null, initialLens: LensType = 'slid
 
   // Get lens definition
   const getLensDefinition = useCallback((lensType: LensType) => {
-    return LensService.LENS_DEFINITIONS[lensType];
+    return LENS_DEFINITIONS[lensType];
   }, []);
 
   return {

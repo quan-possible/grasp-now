@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { NavigationSidebar } from '../components/NavigationSidebar';
 import { DocumentGrid } from '../components/DocumentGrid';
-import { PromptUploadZone } from '../components/PromptUploadZone';
+import { UploadZone } from '../components/UploadZone';
 import { Container } from '../components/layout/Grid';
 import { Button } from '../components/ui/Button';
 import { useAuthStore } from '../store/authStore';
@@ -12,6 +13,8 @@ export default function DocumentsPage() {
   const { user } = useAuthStore();
   const { documents } = useDocumentStore();
   const [selectedFolder, setSelectedFolder] = useState('recents');
+  const [isDragOver, setIsDragOver] = useState(false);
+  const navigate = useNavigate();
 
   const mockFolders = [
     {
@@ -33,21 +36,73 @@ export default function DocumentsPage() {
   ];
 
   const handleDocumentClick = (doc: { id: string; title: string }) => {
-    window.location.href = `/document/${doc.id}`;
+    navigate(`/document/${doc.id}`);
   };
+  
+  const handleUploadComplete = useCallback((documentIds: string[]) => {
+    console.log('=== handleUploadComplete called ===');
+    console.log('Document IDs:', documentIds);
+    console.log('Current location:', window.location.pathname);
+    console.log('navigate function exists:', !!navigate);
+    
+    // Navigate to the first uploaded document's reading page
+    if (documentIds && documentIds.length > 0) {
+      const targetUrl = `/document/${documentIds[0]}`;
+      console.log('Will navigate to:', targetUrl);
+      
+      // Navigate immediately instead of using timeout
+      console.log('Calling navigate...');
+      navigate(targetUrl);
+      console.log('Navigation call completed');
+    } else {
+      console.log('ERROR: No document IDs received');
+    }
+  }, [navigate]);
+  
+  // Handle drag and drop on the entire page
+  const handlePageDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  }, []);
+  
+  const handlePageDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Only hide drag overlay if we're leaving the main container
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragOver(false);
+    }
+  }, []);
+  
+  const handlePageDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    
+    // Page-level drops are now handled by showing the drag overlay only
+    // The actual file handling will be done by the UploadZone component
+  }, []);
 
-  const handleFileUpload = (files: File[]) => {
-    console.log('Uploading files:', files);
-    // TODO: Implement file upload logic
-  };
-
-  const handlePromptSubmit = (prompt: string) => {
-    console.log('Prompt submitted:', prompt);
-    // TODO: Implement prompt processing logic
-  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div 
+      className="min-h-screen bg-gray-50 flex relative"
+      onDragOver={handlePageDragOver}
+      onDragLeave={handlePageDragLeave}
+      onDrop={handlePageDrop}
+    >
+      {/* Global drag overlay */}
+      {isDragOver && (
+        <div className="fixed inset-0 bg-blue-500 bg-opacity-20 border-4 border-blue-500 border-dashed z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <div className="text-4xl mb-4">📄</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Drop files to upload</h3>
+            <p className="text-gray-600">Release to upload your documents</p>
+          </div>
+        </div>
+      )}
+      
       {/* Sidebar */}
       <NavigationSidebar
         user={{ name: user?.displayName || 'User' }}
@@ -94,15 +149,19 @@ export default function DocumentsPage() {
                 </p>
               </div>
 
-              {/* Prompt Upload Zone */}
-              <PromptUploadZone
-                accept={['.pdf', '.docx', '.txt', '.md']}
-                maxSize={10 * 1024 * 1024} // 10MB
-                multiple
-                onUpload={handleFileUpload}
-                onPromptSubmit={handlePromptSubmit}
-                placeholder="Ask questions about your documents or drag & drop files to upload..."
-              />
+              {/* Simple Upload Zone */}
+              <div className="space-y-4" data-upload-zone>
+                <UploadZone
+                  accept={['.pdf', '.docx', '.txt', '.md']}
+                  maxSize={10 * 1024 * 1024}
+                  multiple
+                  onUploadComplete={handleUploadComplete}
+                  validationConfig={{
+                    allowedExtensions: ['.pdf', '.docx', '.txt', '.md'],
+                    maxSize: 10 * 1024 * 1024
+                  }}
+                />
+              </div>
 
               {/* Recent Documents */}
               <div className="space-y-6">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDocumentStore } from '../store/documentStore';
-import type { Document } from '../store/documentStore';
+import type { DocumentType } from '../types';
 import { DocumentGrid } from './DocumentGrid';
 import { DocumentUpload, InlineUpload } from './DocumentUpload';
 import { FolderTree } from './FolderTree';
@@ -9,7 +9,7 @@ import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 
 interface DocumentManagerProps {
-  onDocumentOpen?: (document: Document) => void;
+  onDocumentOpen?: (document: DocumentType) => void;
   className?: string;
 }
 
@@ -58,13 +58,13 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
     );
   });
 
-  const handleDocumentClick = (document: Document) => {
+  const handleDocumentClick = (document: DocumentType) => {
     if (onDocumentOpen) {
       onDocumentOpen(document);
     }
   };
 
-  const handleDocumentDelete = async (document: Document) => {
+  const handleDocumentDelete = async (document: DocumentType) => {
     if (confirm(`Are you sure you want to delete "${document.title}"?`)) {
       try {
         await deleteDocument(document.id);

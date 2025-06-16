@@ -1,4 +1,4 @@
-import { Document } from '../types';
+import type { DocumentType } from '../types';
 
 export type LensType = 'slide' | 'study' | 'story' | 'scholar' | 'speed' | 'faq';
 
@@ -72,7 +72,7 @@ export const LENS_DEFINITIONS: Record<LensType, LensDefinition> = {
 
 export class LensService {
   // Generate initial lens content based on document
-  static generateLensContent(document: Document, lensType: LensType): string {
+  static generateLensContent(document: DocumentType, lensType: LensType): string {
     const baseTitle = document.title;
     
     switch (lensType) {
@@ -203,7 +203,7 @@ Stay tuned for more lens types in future updates!`;
   }
 
   // Get lens content from document or generate if missing
-  static getLensContent(document: Document, lensType: LensType): string {
+  static getLensContent(document: DocumentType, lensType: LensType): string {
     // Check if lens content exists in document
     if (document.lenses && document.lenses[lensType]) {
       return document.lenses[lensType] || '';
@@ -214,7 +214,7 @@ Stay tuned for more lens types in future updates!`;
   }
 
   // Update lens content in document (in real app, this would update Firestore)
-  static updateLensContent(document: Document, lensType: LensType, content: string): Document {
+  static updateLensContent(document: DocumentType, lensType: LensType, content: string): DocumentType {
     const updatedDocument = {
       ...document,
       lenses: {

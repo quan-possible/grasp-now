@@ -70,13 +70,10 @@ export function validateFile(file: File, config: FileValidationConfig = DEFAULT_
     };
   }
 
-  // Check MIME type if available
+  // Check MIME type if available (but don't reject based on MIME type alone)
   if (file.type && !config.allowedTypes.includes(file.type)) {
-    // Check if the extension matches the MIME type
-    const expectedExtensions = MIME_TYPE_MAP[file.type];
-    if (!expectedExtensions?.includes(extension)) {
-      warnings.push(`File "${file.name}" has unexpected MIME type "${file.type}" for extension "${extension}"`);
-    }
+    // Just warn about MIME type mismatch, don't reject
+    warnings.push(`File "${file.name}" has MIME type "${file.type}" which may not be fully supported`);
   }
 
   // Check for suspicious file names

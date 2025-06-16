@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDocumentStore } from '../store/documentStore';
-import type { Folder } from '../store/documentStore';
+import type { Folder } from '../types';
 
 interface FolderBreadcrumbProps {
   currentFolderId?: string;

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **grasp.now** is a document transformation and learning platform that transforms documents through multiple "lenses" - different perspectives optimized for various comprehension needs. 
 
-**Current Status**: Phase 1 Days 1-10 complete. Reading page layout implemented with DocumentEditor and LensSelector components. Testing infrastructure complete with Playwright e2e tests.
+**Current Status**: Phase 1 complete with simplified two-page architecture. Clean document management and unified reading experience with integrated lens system. Code refactored for optimal maintainability.
 
 ## Technology Stack
 
@@ -153,18 +153,20 @@ Implementation follows `docs/phase1.md`:
 - ✅ Milkdown editor fully integrated with rich text editing
 - ✅ Dynamic lens system with proper state management
 - ✅ Lens content generation and switching functionality
+- ✅ Code refactoring for simplified two-page architecture
+- ✅ Clean component structure with unified reading experience
 
 ## Implementation Priorities
 
 When implementing, follow the 4-phase roadmap:
 
-1. **Phase 1 (Weeks 1-4)**: Core Lens Engine ← CURRENT PHASE
+1. **Phase 1 (Weeks 1-4)**: Core Lens Engine ← COMPLETED
    - Document upload and text extraction
    - AI-powered lens generation (Slide, Study, Story)
    - Real-time viewer with lens switching
    - Citation transparency system
 
-2. **Phase 2 (Weeks 5-8)**: Lens Ecosystem  
+2. **Phase 2 (Weeks 5-8)**: Lens Ecosystem ← NEXT PHASE
    - Scholar and Speed lenses
    - Custom lens creation
    - Focus control slider
@@ -250,18 +252,19 @@ Quick guide to project docs:
 - **`docs/components.md`** - UI component library with NYT-inspired design system
 
 ## Memory Log & Current Status
-- Phase 1 Days 1-14 complete: Core UI, document management, reading page with Milkdown integration
-- Milkdown editor fully integrated with rich text editing capabilities
-- Dynamic lens system implemented with proper state management (LensService, useLens hook)
-- Clean architecture: Document → useLens hook → DocumentEditor/LensSelector components
-- End-to-end testing infrastructure complete with Playwright
-- **NEXT PRIORITY**: Phase 1 completion and polish - optimize performance, add remaining features
-- **KEY FILES**: `/src/lib/lensService.ts`, `/src/hooks/useLens.ts`, `/src/pages/ReadingPage.tsx`
-- Remember to look at online source documentation for packages/framework you're not familiar with
+- **Phase 1 COMPLETED**: Simplified two-page architecture with clean separation of concerns
+- **DocumentsPage**: Document management, upload, and navigation
+- **ReadingPage**: Unified editor with integrated lens system (matches design screenshots)
+- **Architecture**: Clean component structure with no redundant editors
+- **Code Quality**: Types centralized in `/types.ts`, proper separation of concerns
+- **Key Components**: LensSelector integrated with DocumentEditor for seamless experience
+- **Testing**: Playwright e2e infrastructure complete, all builds passing
+- **NEXT PRIORITY**: Phase 2 - Extended lens ecosystem (Scholar, Speed, Custom lenses)
+- **KEY FILES**: `/src/pages/ReadingPage.tsx`, `/src/components/reading/`, `/src/types.ts`
 
 ## Recently Completed:
-1. ✅ Integrated Milkdown editor with full WYSIWYG functionality  
-2. ✅ Implemented dynamic lens content generation and switching
-3. ✅ Created proper state management with useLens hook
-4. ✅ Refactored reading page for clean, maintainable architecture
-5. ✅ Added comprehensive error handling and loading states
+1. ✅ Code refactoring for simplified two-page architecture
+2. ✅ Eliminated component confusion and redundancy
+3. ✅ Cleaned up unused code and legacy components
+4. ✅ Verified clean build and linting
+5. ✅ Architecture now matches design screenshots perfectly

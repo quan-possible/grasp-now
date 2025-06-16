@@ -119,5 +119,5 @@ test.describe('Responsive Design', () => {
     // Note: Focus visibility depends on actual implementation
     const activeElement = await page.evaluate(() => document.activeElement?.tagName);
     expect(activeElement).toBeTruthy();
-  };
+  });
 });

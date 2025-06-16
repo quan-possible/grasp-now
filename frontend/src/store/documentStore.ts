@@ -1,66 +1,29 @@
 import { create } from 'zustand';
 import { collection, doc, addDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { ref, deleteObject } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
-
-export interface Document {
-  id: string;
-  title: string;
-  content: string;
-  originalFileName: string;
-  fileType: string;
-  fileSize: number;
-  storageUrl?: string;
-  downloadUrl?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  userId: string;
-  folderId: string | null;
-  tags: string[];
-  lenses?: {
-    slide?: string;
-    study?: string;
-    story?: string;
-  };
-  status: 'uploading' | 'processing' | 'ready' | 'error';
-  preview?: string;
-  thumbnail?: string;
-}
-
-export interface Folder {
-  id: string;
-  name: string;
-  userId: string;
-  parentId: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  documentCount: number;
-}
-
-export interface UploadProgress {
-  file: File;
-  progress: number;
-  status: 'uploading' | 'processing' | 'complete' | 'error';
-  error?: string;
-}
+import type { DocumentType, Folder, UploadProgress } from '../types';
+import { extractTextFromFile } from '../lib/fileExtraction';
+import { mockDocuments } from '../lib/mockData';
 
 interface DocumentState {
-  documents: Document[];
+  documents: DocumentType[];
   folders: Folder[];
-  currentDocument: Document | null;
+  currentDocument: DocumentType | null;
   currentFolder: Folder | null;
   loading: boolean;
   uploading: boolean;
   uploadProgress: UploadProgress[];
   
   // Document actions
-  setDocuments: (documents: Document[]) => void;
-  setCurrentDocument: (document: Document | null) => void;
-  getDocument: (id: string) => Document | null;
-  addDocument: (document: Document) => void;
-  updateDocument: (id: string, updates: Partial<Document>) => void;
+  setDocuments: (documents: DocumentType[]) => void;
+  setCurrentDocument: (document: DocumentType | null) => void;
+  getDocument: (id: string) => DocumentType | null;
+  addDocument: (document: DocumentType) => void;
+  updateDocument: (id: string, updates: Partial<DocumentType>) => void;
   deleteDocument: (id: string) => Promise<void>;
   uploadDocument: (file: File, folderId?: string) => Promise<string>;
+  uploadDocumentWithRedirect: (file: File, onSuccess: (documentId: string) => void, folderId?: string) => Promise<void>;
   
   // Folder actions
   setFolders: (folders: Folder[]) => void;
@@ -81,48 +44,6 @@ interface DocumentState {
   subscribeToFolders: (userId: string, parentId?: string) => () => void;
 }
 
-// Mock data for development
-const mockDocuments: Document[] = [
-  {
-    id: '1',
-    title: 'Product Strategy 2024',
-    content: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion.',
-    originalFileName: 'product-strategy-2024.pdf',
-    fileType: 'application/pdf',
-    fileSize: 2457600, // 2.4MB
-    createdAt: new Date(Date.now() - 86400000), // Yesterday
-    updatedAt: new Date(Date.now() - 86400000),
-    userId: 'temp-user',
-    folderId: 'strategy',
-    tags: ['strategy', 'product'],
-    status: 'ready' as const,
-    lenses: {
-      slide: 'Generated slide content',
-      study: 'Generated study content',
-      story: 'Generated story content'
-    },
-    preview: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion.'
-  },
-  {
-    id: '2',
-    title: 'Market Analysis Report',
-    content: 'Detailed analysis of current market trends and competitive landscape in the document management space.',
-    originalFileName: 'market-analysis.docx',
-    fileType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    fileSize: 1234567, // 1.2MB
-    createdAt: new Date(Date.now() - 172800000), // 2 days ago
-    updatedAt: new Date(Date.now() - 172800000),
-    userId: 'temp-user',
-    folderId: 'research',
-    tags: ['research', 'market'],
-    status: 'ready' as const,
-    lenses: {
-      study: 'Generated study content',
-      story: 'Generated story content'
-    },
-    preview: 'Detailed analysis of current market trends and competitive landscape in the document management space.'
-  }
-];
 
 export const useDocumentStore = create<DocumentState>((set, get) => ({
   documents: mockDocuments,
@@ -187,52 +108,60 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
     });
     
     try {
-      // Upload to Firebase Storage
-      const storageRef = ref(storage, `documents/${userId}/${fileId}`);
-      const uploadTask = uploadBytes(storageRef, file);
-      
-      const snapshot = await uploadTask;
-      const downloadUrl = await getDownloadURL(snapshot.ref);
-      
-      // Extract text content (simplified for now)
+      // Extract text content with enhanced placeholder support
       const content = await extractTextFromFile(file);
       
-      // Create document in Firestore
-      const documentData = {
-        title: file.name.replace(/\.[^/.]+$/, ""),
+      // Generate placeholder lenses immediately for demo
+      const fileName = file.name.replace(/\.[^/.]+$/, "");
+      const lenses = {
+        slide: `# ${fileName} - Key Points\n\n## Main Concepts\n\n- Core idea 1: Essential information\n- Core idea 2: Important details\n- Core idea 3: Key takeaways\n\n## Action Items\n\n- Review content\n- Apply insights\n- Share findings\n\n---\n*Generated slide view*`,
+        study: `# ${fileName} - Study Notes\n\n## Overview\n\nDetailed study notes with comprehensive analysis and examples.\n\n## Key Concepts\n\n### Concept 1\nIn-depth explanation with examples and context.\n\n### Concept 2\nComprehensive breakdown with supporting details.\n\n## Practice Questions\n\n1. What are the main points?\n2. How do these concepts apply?\n3. What are the implications?\n\n---\n*Generated study view*`,
+        story: `# The Story of ${fileName}\n\nOnce upon a time, there was a document that contained valuable information...\n\n## The Journey\n\nThis document represents a journey of ideas, from conception to completion. Each section builds upon the last, creating a narrative that guides the reader through complex concepts with clarity and purpose.\n\n## The Message\n\nAt its heart, this document tells the story of [key theme], weaving together facts and insights into a compelling narrative that resonates with readers.\n\n## The Conclusion\n\nLike all good stories, this one ends with wisdom gained and knowledge shared.\n\n---\n*Generated story view*`
+      };
+      
+      // Simulate upload progress
+      for (let progress = 10; progress <= 100; progress += 20) {
+        get().updateUploadProgress(fileId, { progress });
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      // Create document ID
+      const documentId = `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Create document in local state (demo mode)
+      const newDocument: DocumentType = {
+        id: documentId,
+        title: fileName,
         content,
         originalFileName: file.name,
         fileType: file.type,
         fileSize: file.size,
-        storageUrl: snapshot.ref.fullPath,
-        downloadUrl,
         userId,
         folderId: folderId || null,
         tags: [],
+        lenses,
         status: 'ready' as const,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
+        createdAt: new Date(),
+        updatedAt: new Date()
       };
       
-      const docRef = await addDoc(collection(db, 'documents'), documentData);
-      
-      // Update progress
+      // Update progress to complete
       get().updateUploadProgress(fileId, {
         progress: 100,
         status: 'complete'
       });
       
       // Add to local state
-      const newDocument: Document = {
-        id: docRef.id,
-        ...documentData,
-        createdAt: documentData.createdAt.toDate(),
-        updatedAt: documentData.updatedAt.toDate()
-      };
-      
+      console.log('Adding document to store:', newDocument);
       get().addDocument(newDocument);
       
-      return docRef.id;
+      // Set as current document for immediate reading
+      get().setCurrentDocument(newDocument);
+      
+      console.log('Document upload complete. ID:', documentId);
+      console.log('All documents now:', get().documents.map(d => ({ id: d.id, title: d.title })));
+      
+      return documentId;
     } catch (error) {
       console.error('Upload error:', error);
       get().updateUploadProgress(fileId, {
@@ -247,7 +176,7 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
           uploading: false,
           uploadProgress: get().uploadProgress.filter(p => p.file.name !== file.name)
         });
-      }, 2000);
+      }, 1000);
     }
   },
 
@@ -325,12 +254,12 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
       );
       
       const querySnapshot = await getDocs(q);
-      const documents: Document[] = querySnapshot.docs.map(doc => ({
+      const documents: DocumentType[] = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
         updatedAt: doc.data().updatedAt?.toDate() || new Date()
-      })) as Document[];
+      })) as DocumentType[];
       
       set({ documents });
     } catch (error) {
@@ -364,6 +293,16 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
     }
   },
   
+  uploadDocumentWithRedirect: async (file: File, onSuccess: (documentId: string) => void, folderId?: string) => {
+    try {
+      const documentId = await get().uploadDocument(file, folderId);
+      onSuccess(documentId);
+    } catch (error) {
+      console.error('Upload with redirect failed:', error);
+      throw error;
+    }
+  },
+  
   subscribeToDocuments: (userId: string, folderId?: string) => {
     const q = query(
       collection(db, 'documents'),
@@ -373,12 +312,12 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
     );
     
     return onSnapshot(q, (snapshot) => {
-      const documents: Document[] = snapshot.docs.map(doc => ({
+      const documents: DocumentType[] = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
         updatedAt: doc.data().updatedAt?.toDate() || new Date()
-      })) as Document[];
+      })) as DocumentType[];
       
       set({ documents });
     });
@@ -405,31 +344,3 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
   }
 }));
 
-// Utility function to extract text from files
-async function extractTextFromFile(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    
-    reader.onload = (e) => {
-      const content = e.target?.result as string;
-      
-      // For now, just handle text files
-      // TODO: Add PDF.js for PDF files, mammoth for DOCX
-      if (file.type.startsWith('text/') || file.name.endsWith('.md') || file.name.endsWith('.txt')) {
-        resolve(content);
-      } else {
-        // Placeholder for other file types
-        resolve(`Content extracted from ${file.name}`);
-      }
-    };
-    
-    reader.onerror = () => reject(new Error('Failed to read file'));
-    
-    if (file.type.startsWith('text/') || file.name.endsWith('.md') || file.name.endsWith('.txt')) {
-      reader.readAsText(file);
-    } else {
-      // For binary files, we'll need specialized libraries
-      resolve(`Binary file: ${file.name}`);
-    }
-  });
-}

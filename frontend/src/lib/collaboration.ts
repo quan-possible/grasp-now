@@ -141,7 +141,7 @@ export class CollaborationService {
   /**
    * Process cursor updates from Firestore
    */
-  private processCursorUpdates(documentId: string, cursors: Record<string, any>): void {
+  private processCursorUpdates(documentId: string, cursors: Record<string, CollaborationCursor>): void {
     const session = this.sessions.get(documentId);
     if (!session) return;
 
@@ -149,7 +149,7 @@ export class CollaborationService {
       if (cursorData) {
         session.cursors.set(userId, {
           ...cursorData,
-          lastSeen: cursorData.lastSeen?.toDate() || new Date(),
+          lastSeen: cursorData.lastSeen || new Date(),
         });
       } else {
         session.cursors.delete(userId);

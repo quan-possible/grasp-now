@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Card } from './ui/Card';
-import type { Document } from '../store/documentStore';
+import type { DocumentType } from '../types';
 import { formatFileSize, getFileTypeFromExtension } from '../lib/fileValidation';
 
 interface DocumentGridProps {
-  documents: Document[];
+  documents: DocumentType[];
   viewMode: 'grid' | 'list';
-  onDocumentClick: (doc: Document) => void;
-  onDocumentDelete?: (doc: Document) => void;
-  onDocumentEdit?: (doc: Document) => void;
+  onDocumentClick: (doc: DocumentType) => void;
+  onDocumentDelete?: (doc: DocumentType) => void;
+  onDocumentEdit?: (doc: DocumentType) => void;
   loading?: boolean;
   emptyState?: React.ReactNode;
   selectedDocuments?: string[];
@@ -16,7 +16,7 @@ interface DocumentGridProps {
 }
 
 interface DocumentCardProps {
-  document: Document;
+  document: DocumentType;
   onClick?: () => void;
   onDelete?: () => void;
   onEdit?: () => void;
@@ -60,7 +60,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
     return date.toLocaleDateString();
   };
   
-  const getStatusColor = (status: Document['status']) => {
+  const getStatusColor = (status: DocumentType['status']) => {
     switch (status) {
       case 'ready': return 'text-green-600 bg-green-50';
       case 'processing': return 'text-yellow-600 bg-yellow-50';
@@ -161,7 +161,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
         {/* Tags */}
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {tags.slice(0, 3).map((tag, index) => (
+            {tags.slice(0, 3).map((tag: string, index: number) => (
               <span
                 key={index}
                 className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg"

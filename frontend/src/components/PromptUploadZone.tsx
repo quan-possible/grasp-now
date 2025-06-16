@@ -1,11 +1,13 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Card } from './ui/Card';
+import { UploadZone } from './UploadZone';
 
 interface PromptUploadZoneProps {
   accept: string[];
   maxSize: number;
   multiple?: boolean;
-  onUpload: (files: File[]) => void;
+  onUpload?: (files: File[]) => void;
+  onUploadComplete?: (documentIds: string[]) => void;
   onPromptSubmit: (prompt: string) => void;
   uploading?: boolean;
   progress?: number;
@@ -16,88 +18,61 @@ export const PromptUploadZone: React.FC<PromptUploadZoneProps> = ({
   accept,
   maxSize,
   multiple = false,
-  onUpload,
+  onUpload: _onUpload, // eslint-disable-line @typescript-eslint/no-unused-vars
+  onUploadComplete,
   onPromptSubmit,
   uploading = false,
-  progress = 0,
   placeholder = "Ask or find anything from your workspace..."
 }) => {
-  const [isDragOver, setIsDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [prompt, setPrompt] = useState('');
   const [focusMode, setFocusMode] = useState<'prompt' | 'upload' | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const validateFile = useCallback((file: File): string | null => {
-    const extension = '.' + file.name.split('.').pop()?.toLowerCase();
-    
-    if (!accept.includes(extension)) {
-      return `File type not supported. Accepted types: ${accept.join(', ')}`;
-    }
-    
-    if (file.size > maxSize) {
-      const maxSizeMB = Math.round(maxSize / (1024 * 1024));
-      return `File size exceeds ${maxSizeMB}MB limit`;
-    }
-    
-    return null;
-  }, [accept, maxSize]);
+  // Validation is now handled by UploadZone component
+  // const validateFile = useCallback((file: File): string | null => {
+  //   const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+  //   
+  //   if (!accept.includes(extension)) {
+  //     return `File type not supported. Accepted types: ${accept.join(', ')}`;
+  //   }
+  //   
+  //   if (file.size > maxSize) {
+  //     const maxSizeMB = Math.round(maxSize / (1024 * 1024));
+  //     return `File size exceeds ${maxSizeMB}MB limit`;
+  //   }
+  //   
+  //   return null;
+  // }, [accept, maxSize]);
 
-  const handleFiles = useCallback((files: FileList) => {
-    const fileArray = Array.from(files);
-    const validFiles: File[] = [];
-    
-    for (const file of fileArray) {
-      const error = validateFile(file);
-      if (error) {
-        setError(error);
-        return;
-      }
-      validFiles.push(file);
-    }
-    
-    setError(null);
-    onUpload(validFiles);
-  }, [onUpload, validateFile]);
+  // const handleFiles = useCallback((files: FileList | File[]) => {
+  //   const fileArray = Array.isArray(files) ? files : Array.from(files);
+  //   const validFiles: File[] = [];
+  //   
+  //   for (const file of fileArray) {
+  //     const error = validateFile(file);
+  //     if (error) {
+  //       setError(error);
+  //       return;
+  //     }
+  //     validFiles.push(file);
+  //   }
+  //   
+  //   setError(null);
+  //   // Call onUpload for external handling (like logging)
+  //   if (onUpload) {
+  //     onUpload(validFiles);
+  //   }
+  //   // The UploadZone component will handle the actual upload
+  // }, [onUpload, validateFile]);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(true);
-    setFocusMode('upload');
-  }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    setFocusMode(null);
-  }, []);
+  // const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  //   // Don't handle files here - let the UploadZone handle them
+  //   // The file input is managed by UploadZone
+  // }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    setFocusMode(null);
-    
-    if (uploading) return;
-    
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleFiles(files);
-    }
-  }, [uploading, handleFiles]);
-
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFiles(files);
-    }
-  }, [handleFiles]);
-
-  const handleUploadClick = useCallback(() => {
-    if (!uploading && fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  }, [uploading]);
 
   const handlePromptSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -130,80 +105,31 @@ export const PromptUploadZone: React.FC<PromptUploadZoneProps> = ({
     adjustTextareaHeight();
   }, [adjustTextareaHeight]);
 
-  const formatFileTypes = (types: string[]) => {
-    return types.map(type => type.toUpperCase().replace('.', '')).join(', ');
-  };
 
-  const isUploadMode = focusMode === 'upload' || isDragOver;
-  // const isPromptMode = focusMode === 'prompt' || prompt.trim();
+  const isUploadMode = focusMode === 'upload';
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-3">
       <div className="relative">
-        <div
-          className="relative"
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept={accept.join(',')}
-            multiple={multiple}
-            onChange={handleFileInput}
-            className="hidden"
-            disabled={uploading}
-          />
+        <div className="relative">
 
-          {/* Drag and Drop Area - Extended Upper Section */}
-          {(isUploadMode || isDragOver) && (
-            <div className={`
-              mb-2 p-6 border-2 border-dashed rounded-lg transition-all duration-200 ease-out cursor-pointer
-              ${isDragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50 hover:border-gray-400'}
-              ${uploading ? 'opacity-50 cursor-not-allowed' : ''}
-            `}
-            onClick={!uploading ? handleUploadClick : undefined}
-            >
-              <div className="text-center">
-                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-100 flex items-center justify-center">
-                  {uploading ? (
-                    <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                  )}
-                </div>
-                <p className="text-sm font-medium text-gray-900 mb-1">
-                  {uploading ? 'Uploading files...' : (isDragOver ? 'Drop files to upload' : 'Drag & drop files here')}
-                </p>
-                <p className="text-xs text-gray-500 mb-3">
-                  {uploading ? `${Math.round(progress)}% complete` : `${formatFileTypes(accept)} • Max ${Math.round(maxSize / (1024 * 1024))}MB`}
-                </p>
-                
-                {!uploading && (
-                  <button
-                    type="button"
-                    onClick={handleUploadClick}
-                    className="px-4 py-2 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    Or click to browse
-                  </button>
-                )}
-
-                {/* Progress Bar */}
-                {uploading && (
-                  <div className="w-full max-w-xs mx-auto bg-gray-200 rounded-full h-2 mt-4">
-                    <div
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                )}
-              </div>
+          {/* Upload Zone - Always show when in upload mode */}
+          {isUploadMode && (
+            <div className="mb-2">
+              <UploadZone
+                accept={accept}
+                maxSize={maxSize}
+                multiple={multiple}
+                onUploadComplete={onUploadComplete}
+                className="border-blue-300 bg-blue-50"
+                validationConfig={{
+                  allowedExtensions: accept,
+                  maxSize: maxSize
+                }}
+              />
             </div>
           )}
+          
 
           {/* Main Prompt Input Box - Always Visible Like Notion */}
           <form onSubmit={handlePromptSubmit} className="relative">

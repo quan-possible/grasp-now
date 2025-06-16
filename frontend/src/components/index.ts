@@ -20,4 +20,4 @@ export { Login } from './Login';
 
 // Editor Components
 export { MilkdownEditor } from './MilkdownEditor';
-export { DocumentEditor } from './DocumentEditor';
+export { StandaloneEditor } from './StandaloneEditor';

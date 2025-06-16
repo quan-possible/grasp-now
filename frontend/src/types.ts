@@ -1,4 +1,6 @@
-export interface Document {
+
+// Document type with all fields
+export interface DocumentType {
   id: string;
   title: string;
   content: string;
@@ -16,12 +18,16 @@ export interface Document {
     slide?: string;
     study?: string;
     story?: string;
+    scholar?: string;
+    speed?: string;
+    faq?: string;
   };
   status: 'uploading' | 'processing' | 'ready' | 'error';
   preview?: string;
   thumbnail?: string;
 }
 
+// Folder type for organizing documents
 export interface Folder {
   id: string;
   name: string;
@@ -30,4 +36,12 @@ export interface Folder {
   createdAt: Date;
   updatedAt: Date;
   documentCount: number;
+}
+
+// Upload progress tracking
+export interface UploadProgress {
+  file: File;
+  progress: number;
+  status: 'uploading' | 'processing' | 'complete' | 'error';
+  error?: string;
 }
