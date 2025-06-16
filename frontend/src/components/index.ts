@@ -17,3 +17,7 @@ export { DocumentManager } from './DocumentManager';
 // Auth Components
 export { AuthProvider } from './AuthProvider';
 export { Login } from './Login';
+
+// Editor Components
+export { MilkdownEditor } from './MilkdownEditor';
+export { DocumentEditor } from './DocumentEditor';

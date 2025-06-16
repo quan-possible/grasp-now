@@ -26,6 +26,7 @@ function App() {
       createdAt: new Date(Date.now() - 86400000), // Yesterday
       updatedAt: new Date(Date.now() - 86400000),
       userId: 'temp-user',
+      folderId: 'strategy',
       tags: ['strategy', 'product'],
       status: 'ready' as const,
       lenses: {
@@ -45,6 +46,7 @@ function App() {
       createdAt: new Date(Date.now() - 172800000), // 2 days ago
       updatedAt: new Date(Date.now() - 172800000),
       userId: 'temp-user',
+      folderId: 'research',
       tags: ['research', 'market'],
       status: 'ready' as const,
       lenses: {

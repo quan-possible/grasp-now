@@ -27,7 +27,7 @@ export const FolderBreadcrumb: React.FC<FolderBreadcrumbProps> = ({
       if (!folder) break;
       
       path.unshift(folder);
-      currentId = folder.parentId;
+      currentId = folder.parentId || undefined;
     }
 
     return path;

@@ -187,3 +187,5 @@ Quick guide to project docs:
 
 ## Memory Log
 - We are working on @docs/phase1.md
+- Look at docs/milkdown.md for relevant documentations on milkdown
+- Remember to look at online source documentation for packages/framework you're not familiar with, e.g. Milkdown. Running into errors wo or three times in a rowis also a good sign that you need to look at the relevant source documentation.

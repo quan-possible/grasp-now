@@ -5,9 +5,13 @@ import { DocumentGrid } from './components/DocumentGrid';
 import { PromptUploadZone } from './components/PromptUploadZone';
 import { Container } from './components/layout/Grid';
 import { Button } from './components/ui/Button';
+import { MilkdownEditor } from './components/MilkdownEditor';
+import { SimpleMilkdownEditor } from './components/SimpleMilkdownEditor';
 
 function AppDemo() {
   const [selectedFolder, setSelectedFolder] = useState('recents');
+  const [showEditor, setShowEditor] = useState(false);
+  const [editorContent, setEditorContent] = useState('# Welcome to Milkdown Editor\n\nThis is a **Notion-like** editor built with Milkdown. Try typing `/` for commands!\n\n## Features\n- Slash commands\n- Block-based editing\n- Drag and drop\n- Rich text formatting\n- Tables, lists, and more\n\n---\n\n**Start typing to explore the editor...**');
 
   // Mock user data
   const user = {
@@ -27,6 +31,7 @@ function AppDemo() {
       createdAt: new Date(Date.now() - 86400000),
       updatedAt: new Date(Date.now() - 86400000),
       userId: 'temp-user',
+      folderId: 'strategy',
       tags: ['strategy', 'product'],
       status: 'ready' as const,
       lenses: { slide: 'Generated slide content', study: 'Generated study content', story: 'Generated story content' },
@@ -42,6 +47,7 @@ function AppDemo() {
       createdAt: new Date(Date.now() - 172800000),
       updatedAt: new Date(Date.now() - 172800000),
       userId: 'temp-user',
+      folderId: 'research',
       tags: ['research', 'market'],
       status: 'ready' as const,
       lenses: { study: 'Generated study content' },
@@ -57,6 +63,7 @@ function AppDemo() {
       createdAt: new Date(Date.now() - 259200000),
       updatedAt: new Date(Date.now() - 259200000),
       userId: 'temp-user',
+      folderId: null,
       tags: ['meeting', 'team'],
       status: 'ready' as const,
       lenses: { story: 'Generated story content' },
@@ -72,6 +79,7 @@ function AppDemo() {
       createdAt: new Date(Date.now() - 432000000),
       updatedAt: new Date(Date.now() - 432000000),
       userId: 'temp-user',
+      folderId: 'engineering',
       tags: ['architecture', 'technical'],
       status: 'ready' as const,
       lenses: { study: 'Generated study content', slide: 'Generated slide content' },
@@ -161,6 +169,64 @@ function AppDemo() {
       }
       main={
         <Container size="full" className="py-8">
+          {showEditor ? (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Milkdown Editor</h2>
+                  <p className="text-gray-600">Test the Notion-like editing experience</p>
+                </div>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowEditor(false)}
+                >
+                  ← Back to Dashboard
+                </Button>
+              </div>
+              
+              <div className="card p-0 overflow-hidden" style={{ minHeight: '600px' }}>
+                <h3 className="p-4 border-b">Simple Test Editor:</h3>
+                <SimpleMilkdownEditor />
+                
+                <h3 className="p-4 border-b mt-4">Full Editor (if simple works):</h3>
+                <MilkdownEditor
+                  initialMarkdown={editorContent}
+                  onMarkdownChange={(markdown) => {
+                    setEditorContent(markdown);
+                    console.log('Editor content changed:', markdown);
+                  }}
+                  placeholder="Type / for commands, or start writing..."
+                  className="h-full"
+                />
+              </div>
+              
+              <div className="card p-6 bg-gray-50">
+                <h3 className="font-semibold text-gray-900 mb-3">✅ Phase 1 Week 2: Milkdown Editor Integration</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">Features Implemented:</h4>
+                    <ul className="text-gray-600 space-y-1">
+                      <li>• Notion-like slash commands</li>
+                      <li>• Block-based editing structure</li>
+                      <li>• Rich text formatting toolbar</li>
+                      <li>• Drag and drop support</li>
+                      <li>• Auto-save functionality</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">Try These Commands:</h4>
+                    <ul className="text-gray-600 space-y-1">
+                      <li>• Type <code>/</code> for slash menu</li>
+                      <li>• Select text for formatting toolbar</li>
+                      <li>• Drag blocks to reorder</li>
+                      <li>• Use <code>#</code> for headings</li>
+                      <li>• Use <code>*</code> for bullets</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
           <div className="space-y-8">
             {/* Page Header */}
             <div>
@@ -203,28 +269,28 @@ function AppDemo() {
             {/* Getting Started */}
             <div className="card p-8 text-center bg-gradient-to-br from-gray-50 to-white">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                🚀 Phase 1 Day 3-4: UI Framework Complete
+                🚀 Phase 1 Week 2: Milkdown Editor Integration
               </h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                ✅ Component library with cards, buttons, modals<br/>
-                ✅ NYT-inspired typography system<br/>
-                ✅ Responsive grid layouts<br/>
-                ✅ Smooth transitions and card shadows<br/>
-                ✅ Navigation with sidebar<br/>
-                ✅ Document grid and upload zone
+                ✅ Milkdown Crepe editor with React<br/>
+                ✅ Notion-like slash commands<br/>
+                ✅ Block-based editing structure<br/>
+                ✅ Rich text formatting and toolbar<br/>
+                ✅ Auto-save and markdown support<br/>
+                ✅ Custom styling with NYT design system
               </p>
               <div className="flex justify-center space-x-4">
                 <Button 
                   variant="primary"
-                  onClick={() => alert('This would open the upload dialog')}
+                  onClick={() => setShowEditor(true)}
                 >
-                  Upload Document
+                  Try Editor
                 </Button>
                 <Button 
                   variant="secondary"
-                  onClick={() => alert('This would open the help documentation')}
+                  onClick={() => alert('This would open the upload dialog')}
                 >
-                  Learn More
+                  Upload Document
                 </Button>
               </div>
             </div>
@@ -263,6 +329,7 @@ function AppDemo() {
               </div>
             </div>
           </div>
+          )}
         </Container>
       }
     />

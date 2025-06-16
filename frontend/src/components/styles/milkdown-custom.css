@@ -1,0 +1,396 @@
+/* Milkdown Custom Styles - NYT-inspired design */
+
+/* CSS Variable Overrides for Light Theme */
+.crepe.milkdown {
+  --crepe-color-primary: #111827;
+  --crepe-color-secondary: #6b7280;
+  --crepe-color-background: #ffffff;
+  --crepe-color-surface: #f9fafb;
+  --crepe-color-border: #e5e7eb;
+  --crepe-color-text: #111827;
+  --crepe-color-text-secondary: #6b7280;
+  --crepe-color-accent: #2563eb;
+  --crepe-font-default: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --crepe-font-mono: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  --crepe-radius: 8px;
+  --crepe-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --crepe-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* CSS Variable Overrides for Dark Theme */
+.crepe.milkdown.dark {
+  --crepe-color-primary: #f9fafb;
+  --crepe-color-secondary: #9ca3af;
+  --crepe-color-background: #111827;
+  --crepe-color-surface: #1f2937;
+  --crepe-color-border: #374151;
+  --crepe-color-text: #f9fafb;
+  --crepe-color-text-secondary: #d1d5db;
+  --crepe-color-accent: #3b82f6;
+}
+
+/* Editor Container Styles */
+.milkdown-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 400px;
+  background: var(--crepe-color-background);
+  border-radius: var(--crepe-radius);
+  overflow: hidden;
+  position: relative;
+}
+
+.milkdown-editor {
+  flex: 1;
+  height: 100%;
+  min-height: 400px;
+  overflow: auto;
+}
+
+.milkdown {
+  flex: 1;
+  max-width: none;
+  padding: 24px;
+  overflow-y: auto;
+  font-family: var(--crepe-font-default);
+  line-height: 1.6;
+  color: var(--crepe-color-text);
+}
+
+/* Loading State */
+.editor-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 12px;
+  color: var(--crepe-color-text-secondary);
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--crepe-color-border);
+  border-top: 2px solid var(--crepe-color-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Typography Styles */
+.milkdown h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 2rem 0 1rem 0;
+  color: var(--crepe-color-text);
+  letter-spacing: -0.025em;
+}
+
+.milkdown h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 1.75rem 0 0.875rem 0;
+  color: var(--crepe-color-text);
+  letter-spacing: -0.025em;
+}
+
+.milkdown h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 1.5rem 0 0.75rem 0;
+  color: var(--crepe-color-text);
+}
+
+.milkdown h4,
+.milkdown h5,
+.milkdown h6 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 1.25rem 0 0.625rem 0;
+  color: var(--crepe-color-text);
+}
+
+.milkdown p {
+  margin: 0.875rem 0;
+  color: var(--crepe-color-text);
+}
+
+/* List Styles */
+.milkdown ul,
+.milkdown ol {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.milkdown li {
+  margin: 0.5rem 0;
+  color: var(--crepe-color-text);
+}
+
+.milkdown .task-list-item {
+  list-style: none;
+  margin-left: -1.5rem;
+  padding-left: 1.5rem;
+}
+
+.milkdown .task-list-item input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+/* Code Styles */
+.milkdown pre {
+  background: var(--crepe-color-surface);
+  border: 1px solid var(--crepe-color-border);
+  border-radius: var(--crepe-radius);
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+  font-family: var(--crepe-font-mono);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.milkdown code {
+  font-family: var(--crepe-font-mono);
+  font-size: 0.875rem;
+  background: var(--crepe-color-surface);
+  padding: 0.125rem 0.25rem;
+  border-radius: 4px;
+  color: var(--crepe-color-text);
+}
+
+.milkdown pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Quote Styles */
+.milkdown blockquote {
+  border-left: 4px solid var(--crepe-color-border);
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  color: var(--crepe-color-text-secondary);
+  font-style: italic;
+}
+
+/* Table Styles */
+.milkdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.milkdown table th,
+.milkdown table td {
+  border: 1px solid var(--crepe-color-border);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.milkdown table th {
+  background: var(--crepe-color-surface);
+  font-weight: 600;
+}
+
+/* Link Styles */
+.milkdown a {
+  color: var(--crepe-color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.milkdown a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Image Styles */
+.milkdown img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--crepe-radius);
+  margin: 1rem 0;
+}
+
+/* Horizontal Rule */
+.milkdown hr {
+  border: none;
+  border-top: 1px solid var(--crepe-color-border);
+  margin: 2rem 0;
+}
+
+/* Crepe UI Component Customizations */
+
+/* Floating Toolbar */
+.crepe-toolbar {
+  background: var(--crepe-color-background);
+  border: 1px solid var(--crepe-color-border);
+  border-radius: var(--crepe-radius);
+  box-shadow: var(--crepe-shadow-lg);
+  padding: 0.5rem;
+}
+
+.crepe-toolbar button {
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  color: var(--crepe-color-text);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.crepe-toolbar button:hover {
+  background: var(--crepe-color-surface);
+}
+
+.crepe-toolbar button.active {
+  background: var(--crepe-color-accent);
+  color: white;
+}
+
+/* Slash Command Menu */
+.crepe-slash-menu {
+  background: var(--crepe-color-background);
+  border: 1px solid var(--crepe-color-border);
+  border-radius: var(--crepe-radius);
+  box-shadow: var(--crepe-shadow-lg);
+  padding: 0.5rem 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.crepe-slash-menu-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  color: var(--crepe-color-text);
+  transition: background-color 0.15s ease;
+}
+
+.crepe-slash-menu-item:hover,
+.crepe-slash-menu-item.selected {
+  background: var(--crepe-color-surface);
+}
+
+.crepe-slash-menu-item-title {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.crepe-slash-menu-item-description {
+  font-size: 0.875rem;
+  color: var(--crepe-color-text-secondary);
+}
+
+/* Link Tooltip */
+.crepe-link-tooltip {
+  background: var(--crepe-color-background);
+  border: 1px solid var(--crepe-color-border);
+  border-radius: var(--crepe-radius);
+  box-shadow: var(--crepe-shadow-lg);
+  padding: 0.75rem;
+}
+
+.crepe-link-tooltip input {
+  border: 1px solid var(--crepe-color-border);
+  border-radius: 4px;
+  padding: 0.5rem;
+  background: var(--crepe-color-background);
+  color: var(--crepe-color-text);
+  font-size: 0.875rem;
+}
+
+.crepe-link-tooltip input:focus {
+  outline: none;
+  border-color: var(--crepe-color-accent);
+  box-shadow: 0 0 0 1px var(--crepe-color-accent);
+}
+
+/* Block Drag Handle */
+.crepe-block-handle {
+  background: var(--crepe-color-border);
+  border-radius: 2px;
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+}
+
+.crepe-block-handle:hover {
+  opacity: 1;
+  background: var(--crepe-color-text-secondary);
+}
+
+/* Math/LaTeX Styles */
+.math-inline {
+  color: var(--crepe-color-accent);
+  background: var(--crepe-color-surface);
+  padding: 0.125rem 0.25rem;
+  border-radius: 4px;
+}
+
+.math-block {
+  display: block;
+  text-align: center;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--crepe-color-surface);
+  border-radius: var(--crepe-radius);
+}
+
+/* Selection */
+.ProseMirror ::selection {
+  background: rgba(37, 99, 235, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .milkdown {
+    padding: 16px;
+  }
+  
+  .milkdown h1 {
+    font-size: 1.875rem;
+  }
+  
+  .milkdown h2 {
+    font-size: 1.5rem;
+  }
+  
+  .milkdown h3 {
+    font-size: 1.25rem;
+  }
+  
+  .crepe-toolbar {
+    padding: 0.25rem;
+  }
+  
+  .crepe-toolbar button {
+    padding: 0.375rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .crepe-toolbar,
+  .crepe-slash-menu,
+  .crepe-link-tooltip,
+  .crepe-block-handle {
+    display: none !important;
+  }
+  
+  .milkdown {
+    padding: 0;
+    background: white !important;
+    color: black !important;
+  }
+}
