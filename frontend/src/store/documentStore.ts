@@ -56,6 +56,7 @@ interface DocumentState {
   // Document actions
   setDocuments: (documents: Document[]) => void;
   setCurrentDocument: (document: Document | null) => void;
+  getDocument: (id: string) => Document | null;
   addDocument: (document: Document) => void;
   updateDocument: (id: string, updates: Partial<Document>) => void;
   deleteDocument: (id: string) => Promise<void>;
@@ -80,8 +81,51 @@ interface DocumentState {
   subscribeToFolders: (userId: string, parentId?: string) => () => void;
 }
 
+// Mock data for development
+const mockDocuments: Document[] = [
+  {
+    id: '1',
+    title: 'Product Strategy 2024',
+    content: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion.',
+    originalFileName: 'product-strategy-2024.pdf',
+    fileType: 'application/pdf',
+    fileSize: 2457600, // 2.4MB
+    createdAt: new Date(Date.now() - 86400000), // Yesterday
+    updatedAt: new Date(Date.now() - 86400000),
+    userId: 'temp-user',
+    folderId: 'strategy',
+    tags: ['strategy', 'product'],
+    status: 'ready' as const,
+    lenses: {
+      slide: 'Generated slide content',
+      study: 'Generated study content',
+      story: 'Generated story content'
+    },
+    preview: 'Our comprehensive product strategy for the upcoming year, focusing on user experience improvements and market expansion.'
+  },
+  {
+    id: '2',
+    title: 'Market Analysis Report',
+    content: 'Detailed analysis of current market trends and competitive landscape in the document management space.',
+    originalFileName: 'market-analysis.docx',
+    fileType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    fileSize: 1234567, // 1.2MB
+    createdAt: new Date(Date.now() - 172800000), // 2 days ago
+    updatedAt: new Date(Date.now() - 172800000),
+    userId: 'temp-user',
+    folderId: 'research',
+    tags: ['research', 'market'],
+    status: 'ready' as const,
+    lenses: {
+      study: 'Generated study content',
+      story: 'Generated story content'
+    },
+    preview: 'Detailed analysis of current market trends and competitive landscape in the document management space.'
+  }
+];
+
 export const useDocumentStore = create<DocumentState>((set, get) => ({
-  documents: [],
+  documents: mockDocuments,
   folders: [],
   currentDocument: null,
   currentFolder: null,
@@ -92,6 +136,7 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
   // Document actions
   setDocuments: (documents) => set({ documents }),
   setCurrentDocument: (document) => set({ currentDocument: document }),
+  getDocument: (id: string) => get().documents.find(doc => doc.id === id) || null,
   addDocument: (document) => set({ documents: [...get().documents, document] }),
   updateDocument: (id, updates) => set({
     documents: get().documents.map(doc => 

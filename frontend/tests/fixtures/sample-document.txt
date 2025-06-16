@@ -1,0 +1,20 @@
+Sample Document for Testing
+
+This is a sample document used for testing the grasp.now application.
+
+Key Features to Test:
+- Document upload functionality
+- Text extraction and processing
+- Lens generation (Slide, Study, Story formats)
+- Document management and organization
+
+Content Sections:
+
+Introduction
+This document serves as test content for validating the document transformation capabilities of the grasp.now platform.
+
+Main Content
+The platform transforms documents into different "lenses" or perspectives optimized for various comprehension needs. Each lens presents the same content in a format tailored to specific use cases.
+
+Conclusion
+This sample content provides sufficient material for testing lens generation algorithms and user interface components.

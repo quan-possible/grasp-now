@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap');
-
 @tailwind base;
 @tailwind components;  
 @tailwind utilities;
@@ -12,72 +10,136 @@
   }
   
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-    @apply text-gray-900 bg-gray-50 leading-relaxed;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    @apply text-text-primary bg-bg-secondary leading-normal;
   }
   
-  /* NYT-inspired Typography Hierarchy */
+  /* Typography Hierarchy - Design System */
   h1 {
-    font-family: 'Crimson Text', Georgia, serif;
-    @apply text-4xl font-bold text-gray-900 leading-tight mb-6;
+    font-family: Cheltenham, Georgia, 'Times New Roman', serif;
+    @apply text-5xl font-bold text-text-primary leading-tight mb-6;
   }
   
   h2 {
-    font-family: 'Crimson Text', Georgia, serif;
-    @apply text-3xl font-semibold text-gray-900 leading-tight mb-5;
+    font-family: Cheltenham, Georgia, 'Times New Roman', serif;
+    @apply text-4xl font-semibold text-text-primary leading-tight mb-5;
   }
   
   h3 {
-    font-family: 'Crimson Text', Georgia, serif;
-    @apply text-2xl font-semibold text-gray-900 leading-snug mb-4;
+    font-family: Cheltenham, Georgia, 'Times New Roman', serif;
+    @apply text-3xl font-semibold text-text-primary leading-normal mb-4;
   }
   
   h4 {
-    @apply text-xl font-semibold text-gray-900 leading-snug mb-3;
+    @apply text-2xl font-semibold text-text-primary leading-normal mb-3;
   }
   
   h5 {
-    @apply text-lg font-semibold text-gray-900 leading-normal mb-3;
+    @apply text-xl font-semibold text-text-primary leading-normal mb-3;
   }
   
   h6 {
-    @apply text-base font-semibold text-gray-900 leading-normal mb-2;
+    @apply text-lg font-semibold text-text-primary leading-normal mb-2;
   }
   
   p {
-    @apply text-base text-gray-700 leading-relaxed mb-4;
+    @apply text-base text-text-secondary leading-normal mb-4;
   }
   
-  /* Article body text */
-  .article-body {
-    font-family: 'Crimson Text', Georgia, serif;
-    @apply text-lg text-gray-800 leading-relaxed;
+  /* Lens-specific content overrides */
+  .editor-container { 
+    --font-content: theme('fontFamily.sans'); 
+    --text-content: theme('fontSize.base'); 
+    --leading-content: theme('lineHeight.normal'); 
   }
-  
-  /* UI text */
-  .ui-text {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  .editor-container.lens-story { 
+    --font-content: theme('fontFamily.serif'); 
+    --text-content: theme('fontSize.lg'); 
+    --leading-content: theme('lineHeight.relaxed'); 
+  }
+  .editor-container.lens-slide { 
+    --font-content: theme('fontFamily.sans'); 
+    --text-content: theme('fontSize.xl'); 
+    --leading-content: theme('lineHeight.tight'); 
   }
 }
 
 @layer components {
+  /* Card Components */
   .card {
-    @apply bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 ease-out;
+    @apply bg-bg-primary rounded-xl shadow-md transition-all duration-fast ease-in-out;
   }
   
   .card-stack {
-    @apply bg-white rounded-xl shadow-paper-stack hover:shadow-card-active transition-all duration-300 ease-out;
+    @apply bg-bg-primary rounded-xl shadow-stack hover:shadow-active transition-all duration-normal ease-in-out;
   }
   
+  .card:hover {
+    @apply shadow-lg -translate-y-0.5;
+  }
+  
+  /* Button Components */
   .btn-primary {
-    @apply bg-gray-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200;
+    @apply bg-accent text-white px-4 py-2 rounded-lg font-medium font-sans hover:bg-accent-hover transition-all duration-fast ease-in-out active:scale-[0.98];
   }
   
   .btn-secondary {
-    @apply bg-gray-100 text-gray-900 px-6 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200;
+    @apply bg-bg-tertiary text-text-primary px-4 py-2 rounded-lg font-medium font-sans border border-border-primary hover:bg-border-primary transition-all duration-fast ease-in-out active:scale-[0.98];
   }
   
-  /* Text truncation utilities */
+  /* Interaction States */
+  .hover-lift:hover { 
+    @apply -translate-y-0.5 shadow-md; 
+  }
+  
+  .focus-ring:focus-visible { 
+    @apply outline-2 outline-accent outline-offset-2; 
+  }
+  
+  .active-scale:active { 
+    @apply scale-[0.98]; 
+  }
+  
+  /* Tag Pills */
+  .tag-pill {
+    @apply font-sans font-medium text-xs px-2 py-1 rounded-full transition-all duration-fast ease-in-out;
+    @apply hover:-translate-y-0.5 hover:shadow-sm active:scale-95;
+  }
+  
+  /* Gradient Hero */
+  .gradient-hero {
+    background: radial-gradient(circle at center, theme('colors.gradient-center') 0%, theme('colors.gradient-edge') 100%);
+    isolation: isolate;
+  }
+  
+  .gradient-hero h1 {
+    font: 700 theme('fontSize.5xl')/1.1 Cheltenham, Georgia, serif;
+    max-width: 18ch;
+  }
+  
+  /* Drawer */
+  .drawer {
+    width: theme('width.drawer');
+    @apply bg-bg-secondary shadow-drawer;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform theme('transitionDuration.normal') theme('transitionTimingFunction.ease'),
+                opacity theme('transitionDuration.normal') theme('transitionTimingFunction.ease');
+  }
+  
+  .drawer.open {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  
+  @media(min-width: 1440px) {
+    .drawer.auto-desktop { 
+      transform: translateX(0); 
+      opacity: 1; 
+    }
+  }
+  
+  /* Text utilities */
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -92,17 +154,13 @@
     overflow: hidden;
   }
   
-  /* Smooth focus styles */
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500;
+  /* Scrollbar hiding */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   
-  /* Micro-interactions */
-  .hover-lift {
-    @apply transition-transform duration-200 ease-out hover:-translate-y-1;
-  }
-  
-  .hover-scale {
-    @apply transition-transform duration-200 ease-out hover:scale-105;
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
