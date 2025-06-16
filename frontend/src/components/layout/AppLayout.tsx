@@ -18,7 +18,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {/* Left Sidebar - 240px fixed width */}
       <div className="hidden lg:flex lg:flex-shrink-0">
         <div className="flex flex-col w-60">
-          <div className="flex-1 flex flex-col min-h-0 bg-gray-50 border-r border-gray-200">
+          <div className="flex-1 flex flex-col min-h-0 bg-gray-50">
             {sidebar}
           </div>
         </div>
@@ -27,7 +27,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {/* Main content area */}
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
         {/* Header - 56px height */}
-        <div className="relative z-10 flex-shrink-0 flex h-14 bg-white shadow-sm border-b border-gray-200">
+        <div className="relative z-10 flex-shrink-0 flex h-14 bg-gray-50">
           {header}
         </div>
 
@@ -43,7 +43,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
             {/* Right Panel - 320px width when present */}
             {rightPanel && (
-              <div className="flex-shrink-0 w-80 bg-white border-l border-gray-200 overflow-y-auto">
+              <div className="flex-shrink-0 w-80 bg-gray-50 overflow-y-auto">
                 {rightPanel}
               </div>
             )}

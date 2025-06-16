@@ -68,7 +68,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
             {title}
           </h3>
           {space && (
-            <span className="ml-2 px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-md flex-shrink-0">
+            <span className="ml-2 px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg flex-shrink-0">
               {space}
             </span>
           )}
@@ -83,7 +83,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
 
         {/* Thumbnail if available */}
         {thumbnail && (
-          <div className="w-full h-32 bg-gray-100 rounded-md overflow-hidden">
+          <div className="w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
             <img
               src={thumbnail}
               alt={`${title} preview`}
@@ -100,13 +100,13 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
                 {lensTypes.slice(0, 3).map((lens, index) => (
                   <span
                     key={index}
-                    className="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-full"
+                    className="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg"
                   >
                     {lens}
                   </span>
                 ))}
                 {lensTypes.length > 3 && (
-                  <span className="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-full">
+                  <span className="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg">
                     +{lensTypes.length - 3}
                   </span>
                 )}

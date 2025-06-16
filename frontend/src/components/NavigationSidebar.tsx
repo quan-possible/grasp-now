@@ -42,7 +42,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       <div key={folder.id}>
         <div
           className={`
-            flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer
+            flex items-center px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
             transition-colors duration-150
             ${isActive ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'}
           `}
@@ -55,7 +55,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 e.stopPropagation();
                 toggleFolder(folder.id);
               }}
-              className="mr-1 p-0.5 rounded hover:bg-gray-200"
+              className="mr-1 p-0.5 rounded-lg hover:bg-gray-200"
             >
               <svg
                 className={`w-4 h-4 transition-transform duration-150 ${
@@ -89,7 +89,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   return (
     <div className="flex flex-col h-full">
       {/* User section */}
-      <div className="flex-shrink-0 px-4 py-4 border-b border-gray-200">
+      <div className="flex-shrink-0 px-4 py-4">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             {user.avatar ? (
@@ -116,7 +116,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         <div className="mb-6">
           <div
             className={`
-              flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer
+              flex items-center px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
               transition-colors duration-150
               ${activeItem === 'recents' ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'}
             `}
@@ -130,7 +130,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
           <div
             className={`
-              flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer
+              flex items-center px-3 py-2 text-sm font-medium rounded-lg cursor-pointer
               transition-colors duration-150
               ${activeItem === 'shared' ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'}
             `}
@@ -151,7 +151,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             </h3>
             <button
               onClick={onCreateFolder}
-              className="p-1 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-700"
+              className="p-1 rounded-lg hover:bg-gray-200 text-gray-500 hover:text-gray-700"
               title="Create new folder"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,11 +167,11 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       </div>
 
       {/* Bottom links */}
-      <div className="flex-shrink-0 px-3 py-4 border-t border-gray-200">
+      <div className="flex-shrink-0 px-3 py-4">
         <div className="space-y-1">
           <a
             href="#"
-            className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-150"
+            className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors duration-150"
           >
             <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
@@ -181,7 +181,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           
           <a
             href="#"
-            className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-150"
+            className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors duration-150"
           >
             <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

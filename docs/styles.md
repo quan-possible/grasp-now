@@ -4,6 +4,11 @@
 
 A synthesis of **NYT authority**, **Craft.do calm productivity**, and **Linear.app speed**. Monochromatic, typography-centric interface that prioritizes content through space, hierarchy, and subtle interactions.
 
+**Key Principles:**
+- **Borderless Interface**: No borders between toolbars, sidebars, and main areas - creates a seamless, contiguous workspace
+- **Card Emergence**: Content cards emerge from the background with prominent shadows, like stacked papers or deck of cards
+- **Enhanced Roundness**: Increased border radius throughout for a modern, approachable feel
+
 ## Color System
 
 Intentionally minimalist monochromatic palette with a single professional accent for primary actions.
@@ -97,13 +102,15 @@ Strict **4px grid system** for visual rhythm and consistency.
 
 ## Shadows & Elevation
 
-Subtle depth without distraction. Dark mode uses light glows for proper elevation.
+Enhanced shadows to make cards emerge like stacked papers. More prominent depth for better visual hierarchy.
 
 ```css
-/* Light Mode */
+/* Light Mode - Enhanced Paper Stack Effect */
 --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
---shadow-md: 0 2px 8px 0 rgba(0, 0, 0, 0.06);
---shadow-lg: 0 8px 24px 0 rgba(0, 0, 0, 0.08);
+--shadow-md: 0 2px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+--shadow-lg: 0 8px 24px 0 rgba(0, 0, 0, 0.08), 0 4px 12px 0 rgba(0, 0, 0, 0.12);
+--shadow-paper-stack: 0 4px 8px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.04);
+--shadow-card-active: 0 12px 32px rgba(0, 0, 0, 0.1), 0 6px 16px rgba(0, 0, 0, 0.15);
 
 /* Dark Mode */
 --shadow-dark-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
@@ -113,10 +120,14 @@ Subtle depth without distraction. Dark mode uses light glows for proper elevatio
 
 ## Border Radius
 
+Enhanced roundness for modern, approachable interface:
+
 ```css
---radius-sm: 4px;      /* Small elements */
---radius-md: 8px;      /* Default cards, inputs */
---radius-lg: 12px;     /* Large containers */
+--radius-sm: 6px;      /* Small elements (badges, pills) */
+--radius-md: 10px;     /* Default buttons, inputs */
+--radius-lg: 12px;     /* Cards and containers */
+--radius-xl: 16px;     /* Large containers */
+--radius-2xl: 20px;    /* Hero sections */
 --radius-full: 9999px; /* Fully rounded */
 ```
 
@@ -152,29 +163,46 @@ Motion should be purposeful and swift. Only animate `transform`, `opacity`, and 
 ```css
 .card {
   background: var(--bg-primary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
   transition: all var(--duration-fast) var(--ease);
 }
+
+.card-stack {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-paper-stack);
+  transition: all 300ms var(--ease);
+}
+
+.card-stack:hover {
+  box-shadow: var(--shadow-card-active);
+  transform: translateY(-2px);
+}
 ```
+
+**Note**: Cards no longer use borders - they emerge purely through shadow elevation.
 
 ### Buttons
 ```css
 .btn-primary {
   background: var(--accent);
   color: white;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: var(--space-2) var(--space-4);
   font-weight: var(--font-medium);
 }
 
 .btn-secondary {
-  background: transparent;
+  background: var(--bg-tertiary);
   color: var(--text-primary);
-  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) var(--space-4);
+  font-weight: var(--font-medium);
 }
 ```
+
+**Note**: Secondary buttons no longer use borders, relying on background color differentiation.
 
 ## Lens-Specific Styling
 
@@ -206,9 +234,28 @@ CSS variables swap within the editor container based on active lens:
 - **Story**: Serif, relaxed leading, drop caps, magazine-style
 - **Slide**: Sans-serif, card layout, presentation-ready formatting
 
+## Interface Layout Guidelines
+
+### Borderless Design
+- **No borders** between interface areas (toolbars, sidebars, main content)
+- Use consistent background colors to create seamless flow
+- Content separation achieved through spacing and elevation only
+
+### Card Emergence
+- Cards should "float" above the background with prominent shadows
+- Use `shadow-paper-stack` for resting state, `shadow-card-active` for interaction
+- Combine shadows with subtle transforms for hover states
+
+### Enhanced Roundness
+- Default cards: `rounded-xl` (16px)
+- Buttons and inputs: `rounded-lg` (12px)
+- Small badges/pills: `rounded-lg` (12px, not full rounds)
+- Only use `rounded-full` for avatars and truly circular elements
+
 ## Implementation
 
 1. **Tailwind Integration**: Map these tokens to `tailwind.config.js`
 2. **Dark Mode**: Use `class` strategy with manual toggle
 3. **Icons**: Lucide React (16px, 1.5px stroke)
 4. **Performance**: Animate only `transform`, `opacity`, `color`
+5. **Shadow Strategy**: Layer multiple shadows for paper-stack effect
