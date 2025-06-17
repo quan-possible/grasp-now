@@ -19,5 +19,5 @@ export { AuthProvider } from './AuthProvider';
 export { Login } from './Login';
 
 // Editor Components
-export { MilkdownEditor } from './MilkdownEditor';
+export { default as MilkdownEditor } from './MilkdownEditor';
 export { StandaloneEditor } from './StandaloneEditor';

@@ -50,8 +50,8 @@ export default function DocumentsPage() {
       const targetUrl = `/document/${documentIds[0]}`;
       console.log('Will navigate to:', targetUrl);
       
-      // Navigate immediately instead of using timeout
-      console.log('Calling navigate...');
+      // Navigate immediately - no delay needed
+      console.log('Calling navigate immediately...');
       navigate(targetUrl);
       console.log('Navigation call completed');
     } else {
@@ -87,18 +87,18 @@ export default function DocumentsPage() {
 
   return (
     <div 
-      className="min-h-screen bg-gray-50 flex relative"
+      className="min-h-screen bg-bg-page flex relative"
       onDragOver={handlePageDragOver}
       onDragLeave={handlePageDragLeave}
       onDrop={handlePageDrop}
     >
       {/* Global drag overlay */}
       {isDragOver && (
-        <div className="fixed inset-0 bg-blue-500 bg-opacity-20 border-4 border-blue-500 border-dashed z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+        <div className="fixed inset-0 bg-accent bg-opacity-20 border-4 border-accent border-dashed z-50 flex items-center justify-center">
+          <div className="bg-bg-primary rounded-xl shadow-lg p-8 text-center">
             <div className="text-4xl mb-4">📄</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Drop files to upload</h3>
-            <p className="text-gray-600">Release to upload your documents</p>
+            <h3 className="text-xl font-semibold text-text-primary mb-2">Drop files to upload</h3>
+            <p className="text-text-secondary">Release to upload your documents</p>
           </div>
         </div>
       )}
@@ -115,13 +115,13 @@ export default function DocumentsPage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200">
+        <header className="bg-bg-primary border-b border-border-primary">
           <div className="flex-1 flex items-center justify-between px-6 h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-cheltenham text-gray-900">grasp.now</h1>
+              <h1 className="text-xl font-display text-text-primary">grasp.now</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700 font-franklin">
+              <span className="text-sm text-text-secondary font-sans">
                 Welcome, {user?.displayName}
               </span>
               <Button
@@ -141,10 +141,10 @@ export default function DocumentsPage() {
             <div className="space-y-8">
               {/* Page Header */}
               <div>
-                <h2 className="text-2xl font-cheltenham text-gray-900 mb-2">
+                <h2 className="text-2xl font-display text-text-primary mb-2">
                   Good afternoon, {user?.displayName?.split(' ')[0]}
                 </h2>
-                <p className="text-gray-600 font-franklin">
+                <p className="text-text-secondary font-sans">
                   Transform your documents with intelligent lenses
                 </p>
               </div>
@@ -166,7 +166,7 @@ export default function DocumentsPage() {
               {/* Recent Documents */}
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-franklin font-semibold text-gray-900">
+                  <h3 className="text-lg font-sans font-semibold text-text-primary">
                     Recent Documents
                   </h3>
                   <Button variant="ghost" size="sm">
@@ -182,16 +182,25 @@ export default function DocumentsPage() {
               </div>
 
               {/* Getting Started */}
-              <div className="card p-8 text-center bg-gradient-to-br from-gray-50 to-white">
-                <h3 className="text-xl font-cheltenham font-semibold text-gray-900 mb-4">
+              <div className="card p-8 text-center">
+                <h3 className="text-xl font-display font-semibold text-text-primary mb-4">
                   🚀 Phase 1 MVP Implementation Complete
                 </h3>
-                <p className="text-gray-600 font-franklin mb-6 max-w-2xl mx-auto">
+                <p className="text-text-secondary font-sans mb-6 max-w-2xl mx-auto">
                   Core UI framework with NYT-inspired design system, responsive layouts, 
                   and smooth animations. Ready for document management and lens integration.
                 </p>
                 <div className="flex justify-center space-x-4">
-                  <Button variant="primary">
+                  <Button 
+                    variant="primary"
+                    onClick={() => {
+                      // Trigger the file input in the upload zone
+                      const uploadZone = document.querySelector('[data-upload-zone] input[type="file"]') as HTMLInputElement;
+                      if (uploadZone) {
+                        uploadZone.click();
+                      }
+                    }}
+                  >
                     Upload Document
                   </Button>
                   <Button variant="secondary">

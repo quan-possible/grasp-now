@@ -17,23 +17,21 @@ grasp.now is a React application with a simplified two-page architecture built w
 
 ### Setup and Configuration:
 
-*   **`frontend/package.json`**: Manages project dependencies including React 19, Firebase 11.9.1, Zustand 5.0.5, and Tailwind CSS 3.4.17. Defines scripts for development (`npm run dev`), building (`npm run build`), linting (`npm run lint`), and preview (`npm run preview`).
+*   **`frontend/package.json`**: Manages project dependencies including React 19.1.0, React Router 7.6.2, Firebase 11.9.1, Zustand 5.0.5, Milkdown 7.13.1, and Tailwind CSS 3.4.17. Defines scripts for development (`npm run dev`), building (`npm run build`), linting (`npm run lint`), and e2e testing (`npm run test:e2e`).
 *   **`frontend/vite.config.ts`**: Configuration file for the Vite build tool.
 *   **`frontend/tsconfig.json`**: TypeScript compiler configuration with app-specific and node-specific configurations.
 *   **`frontend/src/lib/firebase.ts`**: Initializes and configures the Firebase SDK with comprehensive environment variable validation and error handling. Exports `auth`, `db` (Firestore), and `storage` instances.
 *   **`frontend/index.html`**: The main HTML entry point for the application.
-*   **`frontend/src/main.tsx`**: The primary entry point for the React application, currently rendering `AppDemo` instead of the main `App` component.
+*   **`frontend/src/main.tsx`**: The primary entry point for the React application, rendering the main `App` component with React Router integration.
 
 ### Core Application Components:
 
-*   **`frontend/src/App.tsx`**: The main React application component.
-    *   **Overall:** Manages authentication state, renders different views based on user login status, and provides the main application layout with mock data for demonstration.
-    *   **State Management:** Uses `useAuthStore()` for authentication state and local state for folder selection.
-    *   **Layout Rendering:** Renders authenticated users with `AppLayout` containing `NavigationSidebar`, header with user info and sign-out, and main content with greeting, upload zone, and document grid.
-    *   **Mock Data:** Includes sample documents and folders for UI demonstration.
-    *   **Authentication Integration:** Conditionally renders `Login` component for unauthenticated users or main app layout for authenticated users.
-
-*   **`frontend/src/App.demo.tsx`**: Alternative demo version of the app (currently referenced in main.tsx).
+*   **`frontend/src/App.tsx`**: The main React application component with React Router integration.
+    *   **Overall:** Manages authentication state and provides routing architecture using React Router v7.6.2.
+    *   **Routing:** Implements `BrowserRouter` with routes for `/documents` (DocumentsPage) and `/document/:id` (ReadingPage).
+    *   **State Management:** Uses `useAuthStore()` for authentication state management.
+    *   **Authentication Integration:** Conditionally renders `Login` component for unauthenticated users or main app routes for authenticated users.
+    *   **Navigation:** Automatic redirect to `/documents` for authenticated users at root path.
 
 *   **`frontend/src/components/AuthProvider.tsx`**: Authentication context provider that manages Firebase auth state changes and updates the Zustand auth store.
 
@@ -64,18 +62,23 @@ grasp.now is a React application with a simplified two-page architecture built w
     *   `NavigationSidebar.tsx`: Left sidebar for folder navigation and user actions.
     *   `Grid.tsx`: Grid layout utilities for responsive content arrangement.
 
-*   **Reading Page Components** (Phase 1 Week 2):
-    *   `reading/DocumentEditor.tsx`: Milkdown-based rich text editor with lens content integration.
-    *   `reading/LensSelector.tsx`: Dynamic lens switching interface with preview cards.
+*   **Page Components** (Phase 1 Complete):
+    *   `pages/DocumentsPage.tsx`: Complete document management interface with upload, grid view, and navigation.
+    *   `pages/ReadingPage.tsx`: Unified reading experience with integrated lens system and drag-and-drop demo creation.
+    
+*   **Reading Page Components** (Phase 1 Complete):
+    *   `reading/DocumentEditor.tsx`: Advanced Milkdown editor with lazy loading, error boundaries, and lens integration.
+    *   `reading/LensSelector.tsx`: Dynamic lens switching interface with preview cards for all 6 lens types.
     *   `reading/DocumentHeader.tsx`: Document title header with formatting toolbar.
 
 *   **Feature Components**:
-    *   `DocumentGrid.tsx`: Grid display for document cards with metadata.
-    *   `DocumentUpload.tsx`: File upload functionality with drag-and-drop support.
+    *   `DocumentGrid.tsx`: Grid display for document cards with metadata and navigation.
+    *   `UploadZone.tsx`: Advanced file upload with drag-and-drop, validation, progress tracking, and callback navigation.
     *   `PromptUploadZone.tsx`: Combined prompt input and file upload zone.
     *   `FolderTree.tsx`: Hierarchical folder navigation.
     *   `DocumentManager.tsx`: Document management operations.
     *   `Login.tsx`: Authentication interface for Google sign-in.
+    *   `LoadingFallback.tsx`: Reusable loading component for Suspense boundaries.
 
 *   **UI Base Components** (in `components/ui/`):
     *   `Button.tsx`: Styled button component with design system integration.
@@ -86,8 +89,17 @@ grasp.now is a React application with a simplified two-page architecture built w
 ### Services and Utilities:
 
 *   **`lib/fileValidation.ts`**: File validation utilities for upload restrictions.
-*   **`lib/lensService.ts`**: Centralized lens management with content generation and type definitions.
-*   **`hooks/useLens.ts`**: Custom React hook for lens state management and content switching.
+*   **`lib/lensService.ts`**: Complete lens management system with:
+    *   6 lens types: slide, study, story (Phase 1) + scholar, speed, faq (Phase 2)
+    *   Dynamic content generation for each lens type
+    *   Rich markdown content with structured formatting
+    *   Phase-based availability management
+*   **`hooks/useLens.ts`**: Custom React hook for lens state management:
+    *   Lens selection and switching
+    *   Content caching and updates
+    *   Real-time content synchronization
+*   **`types.ts`**: Centralized TypeScript type definitions for the entire application.
+*   **`components/styles/milkdown-custom.css`**: Custom styling system for Milkdown editor integration.
 *   **Text Extraction**: Basic text extraction from files (placeholder for PDF.js and mammoth.js integration).
 
 ### Data Models:
@@ -98,15 +110,19 @@ grasp.now is a React application with a simplified two-page architecture built w
 
 ## Architecture Patterns:
 
-*   **Component-Based**: Modular React components with clear separation of concerns.
-*   **State Management**: Zustand stores for global state with Firebase integration.
+*   **Page-Based Routing**: React Router v7.6.2 with two main pages (Documents, Reading) and lazy loading.
+*   **Component-Based**: Modular React components with clear separation of concerns (41 TypeScript files).
+*   **State Management**: Zustand stores for global state with Firebase integration and demo system.
 *   **Real-time Updates**: Firestore listeners for live document and folder synchronization.
 *   **File Processing Pipeline**: Upload → Storage → Text Extraction → Firestore → UI Update.
 *   **Authentication Flow**: Firebase Auth with Google provider integration.
+*   **Error Boundaries**: Comprehensive error handling with React Error Boundaries for editor components.
+*   **Lazy Loading**: Suspense-based lazy loading for heavy components like Milkdown editor.
 
 ## Current Implementation Status:
 
-*   ✅ **Foundation**: React 18+ with Vite and TypeScript setup
+*   ✅ **Foundation**: React 19.1.0 with Vite and TypeScript setup
+*   ✅ **Routing**: React Router 7.6.2 with page-based architecture
 *   ✅ **Authentication**: Google sign-in with Firebase Auth
 *   ✅ **UI Framework**: Tailwind CSS with NYT-inspired design system
 *   ✅ **State Management**: Zustand stores for auth and documents
@@ -115,7 +131,10 @@ grasp.now is a React application with a simplified two-page architecture built w
 *   ✅ **Document Management**: Full upload functionality with Firebase Storage
 *   ✅ **Reading Page**: Split-view layout with DocumentEditor and LensSelector
 *   ✅ **Rich Text Editor**: Milkdown integration with WYSIWYG editing
-*   ✅ **Lens System**: Dynamic lens switching with content generation
+*   ✅ **Lens System**: Complete 6-lens ecosystem with dynamic switching:
+    *   **Phase 1 Active**: Slide Lens (presentations), Study Lens (comprehensive notes), Story Lens (narrative format)
+    *   **Phase 2 Planned**: Scholar Lens (academic), Speed Lens (summaries), FAQ Lens (Q&A)
+*   ✅ **Lens Content Generation**: Rich markdown content with structured formatting for each lens type
 *   ✅ **Testing Infrastructure**: Playwright e2e tests with CI/CD pipeline
 
 ## Key Technical Features:
@@ -126,12 +145,19 @@ grasp.now is a React application with a simplified two-page architecture built w
 *   **Type Safety**: Full TypeScript implementation with strict typing.
 *   **Responsive Design**: Mobile-first approach with Tailwind CSS.
 *   **Security**: Firebase Security Rules for user data isolation.
+*   **Lens System**: Complete 6-lens ecosystem with rich content generation:
+    *   Phase 1 lenses generate comprehensive markdown content
+    *   Slide Lens: Presentation-ready key points with takeaways and discussion points
+    *   Study Lens: Detailed learning materials with objectives, examples, and study questions
+    *   Story Lens: Narrative exploration with character-driven explanations and plot structure
+    *   Phase 2 lenses (scholar, speed, faq) show as locked with phase indicators
 
 ## Next Phase Integration Points:
 
-*   **Milkdown Editor**: Rich text editing for document lenses.
-*   **AI Lens Generation**: Integration with Gemini API for document transformations.
+*   **AI Lens Generation**: Integration with Gemini API for intelligent document transformations.
 *   **Advanced File Processing**: PDF.js for PDF extraction, mammoth.js for DOCX.
+*   **Phase 2 Lens Activation**: Unlock Scholar, Speed, and FAQ lenses with AI generation.
+*   **Custom Lens Creation**: User-defined lens types with custom prompts.
 *   **Collaboration Features**: Real-time editing and sharing capabilities.
 
-This summary reflects the current Phase 1 MVP implementation with Milkdown integration, reading page architecture, and comprehensive testing infrastructure complete. The platform is ready for Phase 2 AI lens generation integration.
+This summary reflects the current Phase 1 MVP implementation with complete lens ecosystem, Milkdown integration, reading page architecture, and comprehensive testing infrastructure. The platform has a fully functional 6-lens system with rich content generation and is ready for Phase 2 AI-powered lens generation integration.

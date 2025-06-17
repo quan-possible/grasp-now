@@ -268,3 +268,6 @@ Quick guide to project docs:
 3. ✅ Cleaned up unused code and legacy components
 4. ✅ Verified clean build and linting
 5. ✅ Architecture now matches design screenshots perfectly
+
+## Development Memories
+- Search (NOT fetch) Milkdown editor documentations online first before you do anything with milkdown.

@@ -46,8 +46,8 @@ export default function LensSelector({ selectedLens, availableLenses, onLensSele
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="font-sans text-sm font-medium text-gray-500 uppercase tracking-wide">Available Document Versions</h2>
+      <div className="px-6 py-4 border-b border-border-primary">
+        <h2 className="font-sans text-sm font-medium text-text-tertiary uppercase tracking-wide">Available Document Versions</h2>
       </div>
 
       {/* Lens List */}
@@ -61,8 +61,8 @@ export default function LensSelector({ selectedLens, availableLenses, onLensSele
                 disabled={lens.status === 'locked'}
                 className={`w-full text-left px-6 py-4 transition-all duration-200 ease-in-out border-l-4 ${
                   selectedLens === lens.id
-                    ? 'bg-white border-l-blue-500 shadow-sm'
-                    : 'border-l-transparent hover:bg-gray-100'
+                    ? 'bg-bg-primary border-l-accent shadow-sm'
+                    : 'border-l-transparent hover:bg-bg-tertiary'
                 } ${
                   lens.status === 'locked' 
                     ? 'opacity-50 cursor-not-allowed' 
@@ -70,15 +70,15 @@ export default function LensSelector({ selectedLens, availableLenses, onLensSele
                 }`}
               >
                 <div className="space-y-2">
-                  <h3 className="font-sans font-medium text-gray-900 text-sm">
+                  <h3 className="font-sans font-medium text-text-primary text-sm">
                     {lens.name}
                   </h3>
-                  <div className="bg-gray-100 rounded-md p-3">
+                  <div className="bg-bg-tertiary rounded-md p-3">
                     <div className="space-y-1">
                       {LENS_PREVIEWS[lens.id]?.slice(0, 4).map((line, index) => (
                         <div 
                           key={index} 
-                          className={`text-xs text-gray-600 ${
+                          className={`text-xs text-text-secondary ${
                             line === '' ? 'h-2' : ''
                           }`}
                         >
@@ -90,7 +90,7 @@ export default function LensSelector({ selectedLens, availableLenses, onLensSele
                   
                   {/* Status indicator */}
                   {lens.status === 'locked' && (
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-text-tertiary">
                       Coming in Phase {lens.phase}
                     </div>
                   )}

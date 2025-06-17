@@ -62,11 +62,11 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
   
   const getStatusColor = (status: DocumentType['status']) => {
     switch (status) {
-      case 'ready': return 'text-green-600 bg-green-50';
-      case 'processing': return 'text-yellow-600 bg-yellow-50';
-      case 'uploading': return 'text-blue-600 bg-blue-50';
-      case 'error': return 'text-red-600 bg-red-50';
-      default: return 'text-gray-600 bg-gray-50';
+      case 'ready': return 'text-success bg-green-50';
+      case 'processing': return 'text-warning bg-yellow-50';
+      case 'uploading': return 'text-accent bg-blue-50';
+      case 'error': return 'text-error bg-red-50';
+      default: return 'text-text-secondary bg-bg-tertiary';
     }
   };
 
@@ -76,9 +76,9 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={`transition-all duration-200 cursor-pointer group relative ${
-        selected ? 'ring-2 ring-gray-900 shadow-card-active' : ''
+        selected ? 'ring-2 ring-accent shadow-active' : ''
       } ${
-        isHovered ? 'shadow-lg scale-[1.02] border-gray-300' : ''
+        isHovered ? 'shadow-lg scale-[1.02]' : ''
       }`}
     >
       <Card
@@ -90,10 +90,10 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
         {/* Header with title and actions */}
         <div className="flex items-start justify-between">
           <div className="min-w-0 flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 leading-tight">
+            <h3 className="text-lg font-semibold text-text-primary line-clamp-2 leading-tight">
               {title}
             </h3>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-text-tertiary mt-1">
               {getFileTypeFromExtension(originalFileName)} • {formatFileSize(fileSize)}
             </p>
           </div>
@@ -113,7 +113,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
                       e.stopPropagation();
                       onEdit();
                     }}
-                    className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                    className="p-1.5 text-text-tertiary hover:text-text-secondary hover:bg-bg-tertiary rounded transition-colors"
                     title="Edit document"
                   >
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,7 +127,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
                       e.stopPropagation();
                       onDelete();
                     }}
-                    className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                    className="p-1.5 text-text-tertiary hover:text-error hover:bg-red-50 rounded transition-colors"
                     title="Delete document"
                   >
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,14 +142,14 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
 
         {/* Preview text */}
         {preview && (
-          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
+          <p className="text-text-secondary text-sm leading-relaxed line-clamp-3">
             {preview}
           </p>
         )}
 
         {/* Thumbnail if available */}
         {thumbnail && (
-          <div className="w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
+          <div className="w-full h-32 bg-bg-tertiary rounded-lg overflow-hidden">
             <img
               src={thumbnail}
               alt={`${title} preview`}
@@ -164,13 +164,13 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
             {tags.slice(0, 3).map((tag: string, index: number) => (
               <span
                 key={index}
-                className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg"
+                className="px-2 py-1 text-xs font-medium text-text-secondary bg-bg-tertiary rounded-lg"
               >
                 {tag}
               </span>
             ))}
             {tags.length > 3 && (
-              <span className="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg">
+              <span className="px-2 py-1 text-xs font-medium text-text-tertiary bg-bg-secondary rounded-lg">
                 +{tags.length - 3}
               </span>
             )}
@@ -178,20 +178,20 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
         )}
         
         {/* Footer with metadata */}
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-2 border-t border-border-primary">
           <div className="flex items-center space-x-2">
             {lensTypes.length > 0 && (
               <div className="flex space-x-1">
                 {lensTypes.slice(0, 3).map((lens, index) => (
                   <span
                     key={index}
-                    className="px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg"
+                    className="px-2 py-1 text-xs font-medium text-accent bg-blue-50 rounded-lg"
                   >
                     {lens.charAt(0).toUpperCase() + lens.slice(1)}
                   </span>
                 ))}
                 {lensTypes.length > 3 && (
-                  <span className="px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg">
+                  <span className="px-2 py-1 text-xs font-medium text-accent bg-blue-50 rounded-lg">
                     +{lensTypes.length - 3}
                   </span>
                 )}
@@ -200,11 +200,11 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
           </div>
           
           <div className="text-right">
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-text-tertiary">
               {formatDate(updatedAt)}
             </div>
             {createdAt.getTime() !== updatedAt.getTime() && (
-              <div className="text-xs text-gray-400">
+              <div className="text-xs text-text-tertiary">
                 Created {formatDate(createdAt)}
               </div>
             )}
@@ -219,19 +219,19 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
 const LoadingSkeleton: React.FC = () => (
   <Card padding="md">
     <div className="animate-pulse space-y-3">
-      <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+      <div className="h-5 bg-bg-tertiary rounded w-3/4"></div>
       <div className="space-y-2">
-        <div className="h-4 bg-gray-200 rounded"></div>
-        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-        <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+        <div className="h-4 bg-bg-tertiary rounded"></div>
+        <div className="h-4 bg-bg-tertiary rounded w-5/6"></div>
+        <div className="h-4 bg-bg-tertiary rounded w-4/6"></div>
       </div>
-      <div className="h-32 bg-gray-200 rounded"></div>
+      <div className="h-32 bg-bg-tertiary rounded"></div>
       <div className="flex justify-between items-center pt-2">
         <div className="flex space-x-2">
-          <div className="h-5 w-12 bg-gray-200 rounded-full"></div>
-          <div className="h-5 w-16 bg-gray-200 rounded-full"></div>
+          <div className="h-5 w-12 bg-bg-tertiary rounded-full"></div>
+          <div className="h-5 w-16 bg-bg-tertiary rounded-full"></div>
         </div>
-        <div className="h-3 w-16 bg-gray-200 rounded"></div>
+        <div className="h-3 w-16 bg-bg-tertiary rounded"></div>
       </div>
     </div>
   </Card>
@@ -268,7 +268,7 @@ export const DocumentGrid: React.FC<DocumentGridProps> = ({
     return (
       <div className="text-center py-12">
         <svg
-          className="mx-auto h-12 w-12 text-gray-400"
+          className="mx-auto h-12 w-12 text-text-tertiary"
           stroke="currentColor"
           fill="none"
           viewBox="0 0 48 48"
@@ -280,8 +280,8 @@ export const DocumentGrid: React.FC<DocumentGridProps> = ({
             strokeLinejoin="round"
           />
         </svg>
-        <h3 className="mt-2 text-sm font-medium text-gray-900">No documents</h3>
-        <p className="mt-1 text-sm text-gray-500">Get started by uploading a document.</p>
+        <h3 className="mt-2 text-sm font-medium text-text-primary">No documents</h3>
+        <p className="mt-1 text-sm text-text-secondary">Get started by uploading a document.</p>
       </div>
     );
   }

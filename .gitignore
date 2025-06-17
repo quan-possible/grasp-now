@@ -11,6 +11,8 @@ lerna-debug.log*
 dist/
 build/
 *.local
+.*
+.obsidian
 
 # Environment variables
 .env

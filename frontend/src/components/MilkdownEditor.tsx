@@ -1,11 +1,14 @@
-import React, { useRef, useEffect } from 'react';
-import { Crepe } from '@milkdown/crepe';
+import React, { useEffect } from 'react';
+import { Editor, rootCtx, defaultValueCtx } from '@milkdown/kit/core';
 import { Milkdown, MilkdownProvider, useEditor } from '@milkdown/react';
-import { listener, listenerCtx } from '@milkdown/plugin-listener';
+import { commonmark } from '@milkdown/kit/preset/commonmark';
+import { listener, listenerCtx } from '@milkdown/kit/plugin/listener';
+import { history } from '@milkdown/kit/plugin/history';
+import { gfm } from '@milkdown/kit/preset/gfm';
+// Note: Removed theme-nord to avoid CSS conflicts with Tailwind
+// Milkdown v7 is headless by design, so we'll use custom styling instead
 
-// Import Crepe themes and styles
-import '@milkdown/crepe/theme/common/style.css';
-import '@milkdown/crepe/theme/frame.css';
+// Import custom styles
 import './styles/milkdown-custom.css';
 
 interface MilkdownEditorProps {
@@ -17,98 +20,53 @@ interface MilkdownEditorProps {
   mode?: 'wysiwyg' | 'source';
 }
 
-// Inner component that uses the useEditor hook
-const CrepeEditorInner: React.FC<MilkdownEditorProps & { onReady?: () => void }> = ({
+const MilkdownEditorInner: React.FC<MilkdownEditorProps> = ({
   initialMarkdown = '',
   onMarkdownChange,
   readOnly = false,
   placeholder = 'Type / for commands, or start writing...',
-  onReady,
+  className = '',
+  mode = 'wysiwyg'
 }) => {
-  const crepeRef = useRef<Crepe | null>(null);
+  console.debug('Editor mode:', mode, 'readOnly:', readOnly, 'initialMarkdown:', initialMarkdown, 'placeholder:', placeholder);
 
-  const { loading } = useEditor((root) => {
-    console.log('Creating Crepe editor with useEditor hook...');
-    
-    const crepe = new Crepe({
-      root,
-      defaultValue: initialMarkdown,
-      features: {
-        [Crepe.Feature.CodeMirror]: true,
-        [Crepe.Feature.ListItem]: true,
-        [Crepe.Feature.LinkTooltip]: true,
-        [Crepe.Feature.ImageBlock]: true,
-        [Crepe.Feature.BlockEdit]: true,
-        [Crepe.Feature.Table]: true,
-        [Crepe.Feature.Toolbar]: true,
-        [Crepe.Feature.Cursor]: true,
-        [Crepe.Feature.Placeholder]: true,
-        [Crepe.Feature.Latex]: true,
-      },
-      featureConfigs: {
-        [Crepe.Feature.Placeholder]: {
-          text: placeholder,
-        },
-        [Crepe.Feature.LinkTooltip]: {
-          inputPlaceholder: 'Enter URL...',
-        },
-        [Crepe.Feature.ImageBlock]: {
-          onUpload: async (file: File) => {
-            console.log('Uploading file:', file.name);
-            return URL.createObjectURL(file);
-          },
-        },
-      },
-    });
+  const { get, loading } = useEditor((root) => {
+    return Editor.make()
+      .config((ctx) => {
+        ctx.set(rootCtx, root);
+        ctx.set(defaultValueCtx, initialMarkdown);
+      })
+      .use(commonmark)
+      .use(gfm)
+      .use(history)
+      .use(listener);
+  }, [initialMarkdown]);
 
-    // Set up content change listener
-    if (onMarkdownChange) {
-      crepe.editor.use(listener);
-      crepe.editor.config((ctx) => {
-        const listenerCtxInstance = ctx.get(listenerCtx);
-        listenerCtxInstance.markdownUpdated((_, markdown, prevMarkdown) => {
+  useEffect(() => {
+    if (!loading && onMarkdownChange) {
+      const editor = get();
+      if (editor) {
+        editor.ctx.get(listenerCtx).markdownUpdated((_ctx, markdown, prevMarkdown) => {
           if (markdown !== prevMarkdown) {
             onMarkdownChange(markdown);
           }
         });
-      });
+      }
     }
-
-    crepeRef.current = crepe;
-    
-    return crepe;
-  });
-
-  // Handle ready state
-  useEffect(() => {
-    if (!loading && onReady) {
-      onReady();
-    }
-  }, [loading, onReady]);
-
-  // Handle read-only mode
-  useEffect(() => {
-    if (crepeRef.current && !loading) {
-      crepeRef.current.setReadonly(readOnly);
-    }
-  }, [readOnly, loading]);
-
-  return <Milkdown />;
-};
-
-// Main component with provider
-export const MilkdownEditor: React.FC<MilkdownEditorProps> = (props) => {
-  const { className = '', mode = 'wysiwyg' } = props;
-  
-  // Note: mode parameter is prepared for future implementation of source mode
-  console.debug('Editor mode:', mode);
+  }, [loading, get, onMarkdownChange]);
 
   return (
     <div className={`milkdown-wrapper ${className}`}>
-      <MilkdownProvider>
-        <CrepeEditorInner {...props} />
-      </MilkdownProvider>
+      <Milkdown />
     </div>
+  );
+};
+
+const MilkdownEditor: React.FC<MilkdownEditorProps> = (props) => {
+  return (
+    <MilkdownProvider>
+      <MilkdownEditorInner {...props} />
+    </MilkdownProvider>
   );
 };
 

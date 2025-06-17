@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { MilkdownEditor } from './MilkdownEditor';
+import MilkdownEditor from './MilkdownEditor';
 import { Button } from './ui/Button';
 import { useDocumentStore } from '../store/documentStore';
 import type { DocumentType } from '../types';
